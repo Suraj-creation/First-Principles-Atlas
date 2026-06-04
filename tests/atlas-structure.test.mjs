@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { test } from 'node:test'
 
 const root = process.cwd()
+const require = createRequire(import.meta.url)
 
 function readJson(relativePath) {
   return JSON.parse(readFileSync(path.join(root, relativePath), 'utf8'))
@@ -101,5 +103,26 @@ test('mdx placeholders use mdx-safe comments', () => {
   for (const file of files) {
     const source = readFileSync(file, 'utf8')
     assert.equal(source.includes('<!--'), false, `${path.relative(root, file)} has an HTML comment`)
+  }
+})
+
+test('react-aria package exports required by Nextra resolve to installed files', () => {
+  const packageJsonPath = require.resolve('react-aria/package.json')
+  const packageRoot = path.dirname(packageJsonPath)
+  const requiredExports = [
+    'dist/exports/index.mjs',
+    'dist/exports/FocusRing.mjs',
+    'dist/exports/FocusScope.mjs',
+    'dist/exports/useFocusRing.mjs',
+    'dist/exports/usePress.mjs',
+    'dist/exports/useKeyboard.mjs',
+    'dist/exports/Focusable.mjs'
+  ]
+
+  for (const exportPath of requiredExports) {
+    assert.ok(
+      existsSync(path.join(packageRoot, exportPath)),
+      `react-aria ${exportPath} should be installed`
+    )
   }
 })

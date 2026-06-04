@@ -132,6 +132,31 @@ test('required repository foundation files exist', () => {
   }
 })
 
+test('homepage and computer science landing page surface authored Git platform tracks', () => {
+  const home = readFileSync(path.join(root, 'content/index.mdx'), 'utf8')
+  const computerScience = readFileSync(path.join(root, 'content/computer-science/index.mdx'), 'utf8')
+
+  for (const phrase of [
+    'Featured Learning Tracks',
+    '/computer-science/git/49-complete-git-end-to-end-field-guide',
+    '/computer-science/github/33-github-collaboration-platform-mental-model',
+    '/computer-science/bitbucket/00-why-bitbucket-exists'
+  ]) {
+    assert.ok(home.includes(phrase), `homepage should surface ${phrase}`)
+  }
+
+  for (const phrase of [
+    'Version Control And Collaboration',
+    '/computer-science/git',
+    '/computer-science/github',
+    '/computer-science/bitbucket',
+    'GitHub',
+    'Bitbucket'
+  ]) {
+    assert.ok(computerScience.includes(phrase), `computer science landing page should surface ${phrase}`)
+  }
+})
+
 test('generated placeholder documents use the standard scaffold sections', () => {
   const gitIntro = readFileSync(
     path.join(root, 'content/computer-science/git/00-why-version-control.mdx'),

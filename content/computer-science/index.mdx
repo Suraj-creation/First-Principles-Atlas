@@ -18,56 +18,88 @@ asIndexPage: true
 
 # Computer Science
 
-> Scaffold status: this page defines structure only. Replace comments with manually researched content when the topic is ready.
+This domain collects the systems-level foundations behind practical software work: version control, algorithms, operating systems, architecture, languages, networking, databases, security, and distributed systems.
 
 ## What are we learning?
 
-{/* Content will be written manually. */}
+We are learning how computing systems are built from first principles and how professional developers reason about them in real projects. The first authored cluster is version control and collaboration: Git, GitHub, and Bitbucket.
 
 ## Why does it matter?
 
-{/* Content will be written manually. */}
+Computer science becomes useful when it explains the tools engineers use every day. Git is a content-addressed history system. GitHub and Bitbucket are collaboration platforms around Git. Together they connect local work, review, automation, governance, and release operations.
 
 ## What problem does it solve?
 
-{/* Content will be written manually. */}
+This landing page solves the discovery problem. The deep content exists under this domain, so the page should make the most important authored tracks visible immediately instead of hiding them behind the generic taxonomy.
 
 ## Prerequisites
 
-{/* Content will be written manually. */}
+Start with the version-control tracks if you want practical engineering leverage first. No advanced math is required for Git, GitHub, or Bitbucket, but command-line comfort helps.
 
 ## Core concepts
 
-{/* Content will be written manually. */}
+## Version Control And Collaboration
+
+<div className="atlas-home-grid">
+  <section className="atlas-home-panel">
+    <h3>Git</h3>
+    <p>Local history, object model, branches, merge, rebase, recovery, internals, and advanced workflows.</p>
+    <p><a href="/computer-science/git">Open Git track</a></p>
+    <p><a href="/computer-science/git/49-complete-git-end-to-end-field-guide">Complete Git End-To-End Field Guide</a></p>
+    <p><a href="/computer-science/git/50-advanced-git-workflow-systems">Advanced Git Workflow Systems</a></p>
+  </section>
+  <section className="atlas-home-panel">
+    <h3>GitHub</h3>
+    <p>Hosted collaboration, pull requests, review, branch protection, Actions, security, APIs, and platform futures.</p>
+    <p><a href="/computer-science/github">Open GitHub track</a></p>
+    <p><a href="/computer-science/github/33-github-collaboration-platform-mental-model">GitHub Collaboration Platform Mental Model</a></p>
+    <p><a href="/computer-science/github/35-git-and-github-reference-library">Git And GitHub Reference Library</a></p>
+  </section>
+  <section className="atlas-home-panel">
+    <h3>Bitbucket</h3>
+    <p>Atlassian-centered Git collaboration, branch permissions, merge checks, Pipelines, deployments, Jira, and governance.</p>
+    <p><a href="/computer-science/bitbucket">Open Bitbucket track</a></p>
+    <p><a href="/computer-science/bitbucket/00-why-bitbucket-exists">Why Bitbucket Exists</a></p>
+    <p><a href="/computer-science/bitbucket/07-bitbucket-reference-library">Bitbucket Reference Library</a></p>
+  </section>
+</div>
 
 ## Internal workings
 
-{/* Content will be written manually. */}
+The Computer Science domain is generated from `atlas/taxonomy.json`, but authored landing pages can surface the tracks that are ready for real use. The source files remain MDX so the content can be reviewed, edited, rendered, and versioned.
 
 ## Design decisions
 
-{/* Content will be written manually. */}
+The domain should not behave like a marketing page. It should act like a map: show the available authored material first, then let the full taxonomy expand over time.
 
 ## Alternatives
 
-{/* Content will be written manually. */}
+An alternative is to keep only broad domain links and rely on the sidebar. The screenshot showed why that is weak: users can reasonably think the Git and GitHub material does not exist.
 
 ## Common misconceptions
 
-{/* Content will be written manually. */}
+- "If a page is in the repo, users will find it." Important authored tracks need direct entry points.
+- "Git, GitHub, and Bitbucket are the same topic." Git is the version-control engine. GitHub and Bitbucket are collaboration platforms around Git.
+- "The top navigation is enough." Top navigation shows domains, not the deeper authored track content.
 
 ## References
 
-{/* Content will be written manually. */}
+- [Git official documentation](https://git-scm.com/docs)
+- [GitHub Docs](https://docs.github.com/en)
+- [Bitbucket Cloud documentation](https://support.atlassian.com/bitbucket-cloud/)
 
 ## Related topics
 
-{/* Content will be written manually. */}
+- [Git](/computer-science/git)
+- [GitHub](/computer-science/github)
+- [Bitbucket](/computer-science/bitbucket)
 
 ## Open questions
 
-{/* Content will be written manually. */}
+- Should the homepage eventually show all authored tracks or only the current flagship tracks?
+- Should Git, GitHub, and Bitbucket be promoted into the top navigation as direct links?
 
 ## Research opportunities
 
-{/* Content will be written manually. */}
+- Measure which landing-page links users choose first.
+- Add a generated "authored content" index that automatically lists non-placeholder pages.

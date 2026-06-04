@@ -1,0 +1,117 @@
+---
+title: "Bitbucket Reference Library"
+description: "A comprehensive Bitbucket reference library covering Cloud, Data Center, pull requests, branch permissions, merge checks, Pipelines, deployments, Jira integration, Code Insights, APIs, and migration."
+domain: "Computer Science"
+category: "Bitbucket"
+subcategory: "Bitbucket"
+difficulty: "research"
+stage: "research"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "bitbucket"
+  - "references"
+prerequisites:
+  - "./00-why-bitbucket-exists"
+related:
+  - "../github/35-git-and-github-reference-library"
+  - "./06-advanced-bitbucket-operating-model"
+researchQuestions:
+  - "Which Bitbucket sources should be canonical for platform behavior and workflow design?"
+---
+
+# Bitbucket Reference Library
+
+This is the source map for building and maintaining the Bitbucket track.
+
+## What are we learning?
+
+We are learning where to look for authoritative Bitbucket behavior and how to classify sources by topic.
+
+## Why does it matter?
+
+Bitbucket has product-specific behavior. Pull request rules, Pipelines syntax, deployment environments, branch restrictions, and Jira integration should be grounded in Atlassian documentation, not memory.
+
+## What problem does it solve?
+
+This page solves the maintenance problem. Future authors can expand Bitbucket content from a known source base instead of re-researching every page.
+
+## Prerequisites
+
+Know the Bitbucket platform model and the Git concepts behind branches and pull requests.
+
+## Core concepts
+
+## Comprehensive Bitbucket references
+
+| Source | Use |
+| --- | --- |
+| [Bitbucket Cloud docs](https://support.atlassian.com/bitbucket-cloud/) | Primary source for Cloud behavior |
+| [Bitbucket Data Center docs](https://confluence.atlassian.com/bitbucketserver) | Primary source for self-managed enterprise behavior |
+| [Pull requests](https://support.atlassian.com/bitbucket-cloud/docs/create-a-pull-request/) | PR creation, review, merge flow |
+| [Branch permissions](https://support.atlassian.com/bitbucket-cloud/docs/use-branch-permissions/) | Write restrictions and protected branch patterns |
+| [Merge checks](https://support.atlassian.com/bitbucket-cloud/docs/suggest-or-require-checks-before-a-merge/) | Required conditions before merge |
+| [Bitbucket Pipelines](https://support.atlassian.com/bitbucket-cloud/docs/get-started-with-bitbucket-pipelines/) | CI/CD fundamentals |
+| [Pipelines configuration reference](https://support.atlassian.com/bitbucket-cloud/docs/bitbucket-pipelines-configuration-reference/) | YAML syntax and pipeline behavior |
+| [Variables and secrets](https://support.atlassian.com/bitbucket-cloud/docs/variables-and-secrets/) | Secret and configuration handling |
+| [Deployments](https://support.atlassian.com/bitbucket-cloud/docs/set-up-and-monitor-deployments/) | Environment release tracking |
+| [Code Insights](https://support.atlassian.com/bitbucket-cloud/docs/code-insights/) | Reports and annotations in PRs |
+| [Jira integration](https://support.atlassian.com/bitbucket-cloud/docs/use-bitbucket-with-jira/) | Linking issues, branches, commits, PRs, deployments |
+| [Bitbucket Cloud REST API](https://developer.atlassian.com/cloud/bitbucket/rest/) | Automation and integration |
+| [Bitbucket webhooks](https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/) | Event-driven external systems |
+| [Migration/import docs](https://support.atlassian.com/bitbucket-cloud/docs/import-or-convert-code-from-an-existing-tool/) | Repository migration |
+
+## Internal workings
+
+Use source classes:
+
+```text
+Bitbucket platform behavior -> Atlassian support docs
+API behavior -> Atlassian developer docs
+Git behavior -> git-scm official docs
+workflow recommendation -> Atlassian docs plus engineering practice sources
+team policy -> clearly labeled recommendation
+```
+
+## Design decisions
+
+Every Bitbucket page should include:
+
+1. Platform concept.
+2. Git concept underneath it.
+3. Team workflow consequence.
+4. Failure mode.
+5. Atlassian reference link.
+
+## Alternatives
+
+Blogs and community answers are useful for edge cases, but they should not be the canonical source for platform behavior. When a blog conflicts with Atlassian docs, prefer the docs and describe the blog as a case study.
+
+## Common misconceptions
+
+- "Bitbucket docs are only UI instructions." They also define platform constraints and workflow behavior.
+- "Git docs are enough for Bitbucket." Git docs explain repository mechanics, not Bitbucket merge checks, Pipelines, or Jira integration.
+- "Reference libraries are optional." They make future content reviewable and maintainable.
+
+## References
+
+- [Bitbucket Cloud docs](https://support.atlassian.com/bitbucket-cloud/)
+- [Atlassian developer docs for Bitbucket Cloud](https://developer.atlassian.com/cloud/bitbucket/)
+- [Bitbucket Data Center docs](https://confluence.atlassian.com/bitbucketserver)
+- [Git official docs](https://git-scm.com/docs)
+
+## Related topics
+
+- [Advanced Bitbucket Operating Model](./06-advanced-bitbucket-operating-model)
+- [Git And GitHub Reference Library](../github/35-git-and-github-reference-library)
+
+## Open questions
+
+- Should Bitbucket Cloud and Bitbucket Data Center get separate tracks later?
+- Should API automation examples live here or in a future integrations page?
+
+## Research opportunities
+
+- Build a Bitbucket source-to-topic matrix.
+- Create tests that require every Bitbucket authored page to contain at least one Atlassian reference.

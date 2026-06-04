@@ -1,0 +1,231 @@
+---
+title: "GitHub Collaboration Platform Mental Model"
+description: "A first-principles model of GitHub as a collaboration, review, automation, security, and governance platform around Git."
+domain: "Computer Science"
+category: "GitHub"
+subcategory: "GitHub"
+difficulty: "research"
+stage: "research"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "github"
+  - "collaboration"
+  - "platform"
+prerequisites:
+  - "./00-why-hosted-code-collaboration"
+  - "./05-pull-requests-as-review-units"
+related:
+  - "./34-ai-native-git-and-github-futures"
+  - "./35-git-and-github-reference-library"
+  - "../git/47-workflow-reasoning-and-recovery-playbooks"
+researchQuestions:
+  - "How should GitHub be taught as a platform rather than a set of buttons?"
+  - "Which collaboration policies belong in GitHub and which belong in team culture?"
+---
+
+# GitHub Collaboration Platform Mental Model
+
+GitHub is not "Git on the web." Git is the storage and sync substrate. GitHub is the coordination layer around shared software work.
+
+## What are we learning?
+
+We are learning GitHub as a system for converting proposed code changes into accepted, reviewed, tested, governed, and traceable project history.
+
+The core GitHub loop:
+
+```text
+idea
+issue or discussion
+branch or fork
+commit history
+pull request
+review
+checks
+policy
+merge
+release
+operations feedback
+```
+
+## Why does it matter?
+
+Many developers know how to click "Create pull request" but cannot explain:
+
+- what a PR represents in Git terms;
+- why code review should be small and focused;
+- why branch protection exists;
+- why checks and merge queues protect main;
+- why CODEOWNERS changes review routing;
+- why Actions need least-privilege secrets;
+- why security alerts are part of the development workflow.
+
+GitHub becomes powerful only when the learner sees the platform as a set of coordination contracts.
+
+## What problem does it solve?
+
+Git solves distributed history. GitHub solves distributed trust:
+
+- Who is proposing a change?
+- What code changed?
+- Who reviewed it?
+- Did tests and policy pass?
+- Who is allowed to merge it?
+- What automation ran?
+- What security risk was introduced or removed?
+- How does the team discuss, track, and release it?
+
+## Common beginner confusion
+
+| Confusion | Better model |
+| --- | --- |
+| "A PR is a request to upload code." | A PR is a proposed change set between two refs, plus review, checks, discussion, and merge policy. |
+| "Issues are just bug reports." | Issues are units of work, decisions, investigation, and coordination. |
+| "Actions are deployment scripts." | Actions are event-driven workflows with permissions, environments, secrets, logs, and artifacts. |
+| "Branch protection is bureaucracy." | Branch protection encodes the team's minimum safety contract for changing important refs. |
+| "CODEOWNERS means ownership of code forever." | CODEOWNERS routes review responsibility; social ownership still needs maintenance and context. |
+
+## Prerequisites
+
+Readers should understand commits, branches, remotes, fetch, push, merge, and pull requests at a basic level.
+
+## Core concepts
+
+## Pull requests
+
+Pull requests are review units. They are not just diffs.
+
+A PR combines:
+
+- base branch and comparison branch;
+- commit list;
+- changed files;
+- discussion threads;
+- requested reviewers;
+- checks and deployments;
+- merge method;
+- audit trail.
+
+Small PRs reduce review risk because reviewers can understand intent, check design, and spot unintended changes.
+
+## Branch protection
+
+Branch protection turns team agreements into enforceable rules:
+
+- require pull request review;
+- require status checks;
+- require conversation resolution;
+- require signed commits;
+- restrict who can push;
+- block force pushes;
+- require merge queue in high-throughput repositories.
+
+The first-principles reason: shared refs are coordination points. Updating them should require more evidence than updating private work.
+
+## Actions
+
+GitHub Actions are event-driven automation:
+
+```text
+event -> workflow -> jobs -> steps -> runner -> logs/artifacts/status
+```
+
+Actions should be taught with security from the beginning:
+
+- Minimize token permissions.
+- Scope secrets to environments.
+- Avoid leaking secrets in logs.
+- Treat pull requests from forks carefully.
+- Pin third-party actions when supply-chain risk matters.
+
+## Internal workings
+
+GitHub sits around Git operations:
+
+```text
+git push
+  updates a branch or PR ref
+  triggers webhook and internal events
+  schedules checks
+  updates PR comparison
+  evaluates branch rules
+  allows or blocks merge
+```
+
+The platform is event-driven. Issues, comments, reviews, pushes, check runs, deployments, releases, and security alerts become events that APIs, webhooks, and Actions can observe.
+
+## Design decisions
+
+GitHub's platform design separates concerns:
+
+| Layer | Responsibility |
+| --- | --- |
+| Repository | Git object storage, refs, visibility, permissions |
+| Pull request | proposed change, review, discussion, checks |
+| Automation | CI, deployment, scheduled jobs, bots |
+| Governance | branch protection, CODEOWNERS, organizations, teams |
+| Security | Dependabot, code scanning, secret scanning, advisories |
+| Integration | REST API, GraphQL API, webhooks, GitHub Apps |
+
+Good teaching should make these layers explicit.
+
+## Alternatives
+
+| Platform/workflow | Strength | Tradeoff |
+| --- | --- | --- |
+| GitHub | broad ecosystem, social coding, Actions, security features | platform coupling and permission complexity |
+| GitLab | integrated DevSecOps and self-hosting options | different conventions and operational surface |
+| Gerrit | powerful review of patch sets | steeper learning curve |
+| Sourcehut/email flow | simple, open, patch-oriented | less familiar to many teams |
+| Local-only Git | maximum independence | weak collaboration, review, and automation support |
+
+## Common misconceptions
+
+- "Passing CI means review is done." CI checks known rules. Humans review intent, design, maintainability, and risk.
+- "A required reviewer guarantees quality." Review quality depends on context, attention, incentives, and change size.
+- "Merge queue is only for huge companies." Any repository with frequent concurrent PRs and expensive main breakage can benefit from serialized, tested integration.
+- "Security alerts are separate from development." Dependency and code alerts are part of maintaining the software supply chain.
+
+## Professional operating model
+
+| Scenario | GitHub feature | Reason |
+| --- | --- | --- |
+| Many PRs compete to merge | Merge queue | Test the final integration order, not just each PR in isolation |
+| Sensitive directory changes | CODEOWNERS | Route review to people accountable for that area |
+| Release branch must be stable | Branch protection | Restrict direct mutation and require checks |
+| Open-source contribution | Fork plus PR | Let unknown contributors propose changes without write access |
+| Reusable automation | GitHub Actions | Run repeatable workflows on platform events |
+| Secret-dependent deployment | Environments | Gate secrets and deploy approvals by target |
+| Supply-chain risk | Dependabot and code scanning | Surface dependency and code vulnerabilities in the development loop |
+
+## References
+
+- [GitHub Docs: Pull requests](https://docs.github.com/en/pull-requests)
+- [GitHub Docs: GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow)
+- [GitHub Docs: Protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches)
+- [GitHub Docs: Merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue)
+- [GitHub Docs: GitHub Actions](https://docs.github.com/en/actions)
+- [GitHub Docs: CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners)
+- [GitHub Docs: Code scanning](https://docs.github.com/en/code-security/code-scanning)
+- [GitHub Docs: Dependabot](https://docs.github.com/en/code-security/dependabot)
+- [Google Engineering Practices: Code Review](https://google.github.io/eng-practices/review/)
+
+## Related topics
+
+- [Pull Requests As Review Units](./05-pull-requests-as-review-units)
+- [Branches And Protection Rules](./08-branches-and-protection-rules)
+- [GitHub Actions Foundations](./10-github-actions-foundations)
+- [Workflow Reasoning And Recovery Playbooks](../git/47-workflow-reasoning-and-recovery-playbooks)
+
+## Open questions
+
+- Should GitHub pages teach organization governance before Actions, or after readers understand PR checks?
+- How can the Atlas show the difference between Git refs and GitHub PR refs visually?
+- Which GitHub features should be treated as core and which should be advanced optional layers?
+
+## Research opportunities
+
+- Build a PR lifecycle simulator that shows events, checks, review state, mergeability, and branch protection decisions.
+- Create a repository policy checklist for startups, open-source projects, and enterprises.
+- Compare merge queue behavior across GitHub, GitLab, Buildkite, and custom CI systems.

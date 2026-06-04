@@ -1,0 +1,225 @@
+---
+title: "Deep Git And GitHub Learning Roadmap"
+description: "A Phase 2 roadmap for turning the Git and GitHub tracks from placeholders into confusion-resistant, first-principles learning material."
+domain: "Computer Science"
+category: "Git"
+subcategory: "Git"
+difficulty: "research"
+stage: "research"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "git"
+  - "github"
+  - "roadmap"
+prerequisites:
+  - "./00-why-version-control"
+  - "./05-git-mental-model"
+related:
+  - "./47-workflow-reasoning-and-recovery-playbooks"
+  - "./48-git-internals-from-filesystem-to-replication"
+  - "../github/33-github-collaboration-platform-mental-model"
+researchQuestions:
+  - "What sequence best turns Git command memorization into durable mental models?"
+  - "Which Git and GitHub topics create the most expensive beginner and team mistakes?"
+---
+
+# Deep Git And GitHub Learning Roadmap
+
+This page defines the content strategy for the first real domain of the Atlas: Git and GitHub. It is not a command catalog. It is a map for building judgment.
+
+## What are we learning?
+
+We are learning how to teach Git and GitHub from first principles: why version control exists, how Git represents history, how teams coordinate around history, how GitHub adds review and automation around Git, and how developers recover when the graph does not look like they expected.
+
+The target reader should eventually think in this order:
+
+```text
+change
+state
+snapshot
+history graph
+branch pointer
+local repository
+remote repository
+review system
+automation policy
+team workflow
+```
+
+Commands should appear only after the model is clear.
+
+## Why does it matter?
+
+Git is often the first distributed system a developer uses every day. Confusion here is not small. It leads to lost work, bad releases, noisy pull requests, unsafe force pushes, broken main branches, and fear of normal engineering workflows.
+
+GitHub adds another layer: code review, branch protection, issues, Actions, CODEOWNERS, security alerts, APIs, and organization policy. A developer who only knows `commit`, `push`, and "open a PR" understands the buttons but not the system.
+
+## What problem does it solve?
+
+The current tree has strong coverage breadth but mostly placeholder pages. Phase 2 solves the next problem: converting that scaffold into a curriculum where every page answers:
+
+1. Why does this exist?
+2. What confusion does it prevent?
+3. What mental model should remain after the details fade?
+4. What command follows from that model?
+5. What can go wrong?
+6. How does a professional recover?
+
+## Common beginner confusion
+
+Most beginners mix up layers:
+
+| Confusion | Better model |
+| --- | --- |
+| Git vs GitHub | Git is the local distributed version-control engine. GitHub is a collaboration platform built around Git repositories. |
+| Commit vs push | Commit records a local history node. Push transfers reachable local objects and ref updates to another repository. |
+| Branch vs folder | A branch is usually a movable name pointing at a commit, not a copy of the project. |
+| Merge vs rebase | Merge preserves both histories with a join commit. Rebase copies commits onto a new base to create a different history shape. |
+| Fetch vs pull | Fetch updates remote-tracking refs. Pull means fetch plus integration, usually merge or rebase. |
+| Reset vs revert | Reset moves refs and can change local state. Revert creates a new commit that undoes earlier changes. |
+| Local vs remote branch | A local branch is your ref. A remote-tracking branch is your last known observation of another repository's ref. |
+| Detached HEAD | HEAD points directly to a commit instead of a branch name. New commits can exist, but no branch name moves unless you create one. |
+
+## Prerequisites
+
+Readers need only basic command-line comfort and a rough idea that files change over time. The course should not assume knowledge of hashing, graph theory, CI/CD, or distributed systems. Those ideas should be introduced at the point where Git makes them necessary.
+
+## Core concepts
+
+The content should be organized around six durable mental models.
+
+| Model | What the learner should retain |
+| --- | --- |
+| Snapshot model | Git stores project states and connects them with parent links. It is not primarily a line-by-line command diary. |
+| Three-tree model | Working tree, index, and HEAD answer "what I am editing", "what I intend to commit", and "what the branch currently records". |
+| Graph model | Most hard questions are graph questions: reachability, ancestry, branch names, merge bases, and reflogs. |
+| Distributed model | Every clone is a repository. Sync is negotiation plus object transfer plus ref movement. |
+| Review model | GitHub pull requests are proposed graph changes wrapped in conversation, checks, ownership, and policy. |
+| Recovery model | Git keeps many escape hatches: reflog, object reachability, stash refs, remote refs, and new commits that undo old commits. |
+
+## Internal workings
+
+The roadmap should connect user-facing behavior to internals without overwhelming the reader.
+
+```text
+git add
+  writes file content into the object database
+  records paths and object IDs in the index
+
+git commit
+  writes tree objects from the index
+  writes a commit object with parent links
+  moves the current branch ref
+
+git push
+  negotiates missing objects
+  sends packed objects
+  asks the remote to update refs
+```
+
+The goal is not to turn every learner into a Git maintainer. The goal is to make commands feel inevitable rather than magical.
+
+## Design decisions
+
+Phase 2 should use a content pattern that is repeated across all major topics:
+
+1. Start with the real-world situation.
+2. Name the confusion before teaching the tool.
+3. Explain the object or workflow model.
+4. Show a small diagram or state table.
+5. Introduce commands as model operations.
+6. Explain consequences and risks.
+7. Add recovery paths.
+8. End with long-term memory hooks.
+
+Example page shape:
+
+```text
+What are we learning?
+Why does it matter?
+What problem does this solve?
+Common beginner confusion
+Mental model
+State transition
+Commands that follow
+Professional workflow
+Failure modes
+Recovery
+References
+```
+
+## Alternatives
+
+Three content approaches are possible:
+
+| Approach | Strength | Weakness |
+| --- | --- | --- |
+| Command-first tutorial | Fast for a user who needs one command now | Produces fragile memory and shallow recovery skill |
+| Book-style reference | Complete and authoritative | Too broad for first-pass learning and hard to use during real work |
+| First-principles workflow atlas | Builds mental models, professional judgment, and recovery habits | Requires careful scope control so pages stay readable |
+
+The Atlas should use the third approach and point to official references when exact command syntax or edge-case behavior matters.
+
+## Common misconceptions
+
+- "GitHub is where Git lives." Git can work without GitHub. GitHub hosts and coordinates Git repositories.
+- "A branch contains commits." More precisely, a branch name points to one commit; reachable parent links define the branch's visible history.
+- "A rebase changes commits." Rebase usually creates new commits with new object IDs and moves a branch name to them.
+- "A force push is always wrong." It is unsafe on shared history unless coordinated, but expected for private branch cleanup in many teams.
+- "Merge conflicts mean Git failed." Conflicts mean Git reached the limit of safe automatic inference and asked for human intent.
+
+## Gap analysis
+
+The existing track names are strong, but the highest-value missing content is not more topic names. It is reasoning inside topics.
+
+| Gap | Where to add it |
+| --- | --- |
+| Beginner confusion is not named early enough | Add a "Common beginner confusion" section to every first-pass Git and GitHub page |
+| Workflow tradeoffs are underdeveloped | Add scenario pages for merge vs rebase, updating PRs, hotfixes, release branches, and stacked work |
+| Recovery is too small relative to its importance | Make reflog, reset, revert, branch recovery, and bad push recovery a core practice section |
+| Git internals are disconnected from daily use | Tie object database, index file, refs, packfiles, and protocol negotiation to commands |
+| GitHub is at risk of becoming a UI tour | Teach GitHub as policy, review, automation, identity, and event infrastructure |
+| AI improvement ideas need a systems frame | Separate AI-native improvements from ordinary productivity tips |
+
+## Content roadmap
+
+Phase 2 should be written in layers.
+
+| Layer | Outcome | Example pages |
+| --- | --- | --- |
+| Orientation | The learner stops confusing Git, GitHub, commits, pushes, branches, and PRs | Git mental model, What is GitHub, Pull requests as review units |
+| Practice | The learner can perform daily work and explain each action | Starting a feature, syncing with main, updating a PR, resolving conflicts |
+| Recovery | The learner can diagnose and recover from common mistakes | Reflog, bad merge, wrong branch, lost commit, accidental force push |
+| Internals | The learner can map commands to objects, refs, index entries, packs, and protocols | Object model, index internals, packfiles, protocol v2 |
+| Platform | The learner can reason about GitHub governance and automation | Branch protection, merge queue, Actions, CODEOWNERS, security alerts |
+| Frontier | The learner can imagine and evaluate better version-control systems | AI-native merge, semantic history, provenance, review automation |
+
+## References
+
+- [Pro Git book](https://git-scm.com/book/en/v2) for the canonical broad introduction, including branching, distributed workflows, and internals.
+- [Git reference manual](https://git-scm.com/docs) for exact command behavior.
+- [Git technical documentation](https://github.com/git/git/tree/master/Documentation/technical) for index, pack, protocol, commit-graph, and repository details.
+- [GitHub Docs](https://docs.github.com/en) for pull requests, Actions, branch protection, merge queue, CODEOWNERS, security, APIs, and platform features.
+- [Google Engineering Practices: Code Review](https://google.github.io/eng-practices/review/) for review quality, reviewer behavior, and small-change practice.
+- [Trunk Based Development](https://trunkbaseddevelopment.com/) for short-lived branch and integration patterns.
+
+## Related topics
+
+- [Workflow Reasoning And Recovery Playbooks](./47-workflow-reasoning-and-recovery-playbooks)
+- [Git Internals From Filesystem To Replication](./48-git-internals-from-filesystem-to-replication)
+- [GitHub Collaboration Platform Mental Model](../github/33-github-collaboration-platform-mental-model)
+- [Git And GitHub Reference Library](../github/35-git-and-github-reference-library)
+
+## Open questions
+
+- Should the Atlas teach rebase early because it clarifies history rewriting, or later because it increases risk?
+- Should every command page include a "state before / state after" table?
+- Should GitHub workflow pages be organized by user role: contributor, maintainer, reviewer, release owner, security owner?
+
+## Research opportunities
+
+- Build a small state-machine visualizer for working tree, index, HEAD, and branch refs.
+- Create a conflict taxonomy from real repositories: textual conflict, semantic conflict, generated-file conflict, lockfile conflict, API contract conflict.
+- Design an AI-assisted recovery tutor that reads `git status`, `git log`, and reflog data, then proposes reversible next steps.

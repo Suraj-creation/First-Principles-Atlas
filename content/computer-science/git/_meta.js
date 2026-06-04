@@ -281,5 +281,35 @@ export default {
     "theme": {
       "timestamp": false
     }
+  },
+  "46-deep-git-github-learning-roadmap": {
+    "title": "Deep Git And GitHub Learning Roadmap",
+    "theme": {
+      "timestamp": false
+    }
+  },
+  "47-workflow-reasoning-and-recovery-playbooks": {
+    "title": "Workflow Reasoning And Recovery Playbooks",
+    "theme": {
+      "timestamp": false
+    }
+  },
+  "48-git-internals-from-filesystem-to-replication": {
+    "title": "Git Internals From Filesystem To Replication",
+    "theme": {
+      "timestamp": false
+    }
+  },
+  "49-complete-git-end-to-end-field-guide": {
+    "title": "Complete Git End-To-End Field Guide",
+    "theme": {
+      "timestamp": false
+    }
+  },
+  "50-advanced-git-workflow-systems": {
+    "title": "Advanced Git Workflow Systems",
+    "theme": {
+      "timestamp": false
+    }
   }
 }

@@ -203,5 +203,23 @@ export default {
     "theme": {
       "timestamp": false
     }
+  },
+  "33-github-collaboration-platform-mental-model": {
+    "title": "GitHub Collaboration Platform Mental Model",
+    "theme": {
+      "timestamp": false
+    }
+  },
+  "34-ai-native-git-and-github-futures": {
+    "title": "AI-Native Git And GitHub Futures",
+    "theme": {
+      "timestamp": false
+    }
+  },
+  "35-git-and-github-reference-library": {
+    "title": "Git And GitHub Reference Library",
+    "theme": {
+      "timestamp": false
+    }
   }
 }

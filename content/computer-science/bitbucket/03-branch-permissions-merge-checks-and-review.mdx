@@ -1,0 +1,102 @@
+---
+title: "Branch Permissions, Merge Checks, And Review"
+description: "How Bitbucket branch permissions, merge checks, reviewers, tasks, and Code Insights protect important branches."
+domain: "Computer Science"
+category: "Bitbucket"
+subcategory: "Bitbucket"
+difficulty: "advanced"
+stage: "practice"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "bitbucket"
+  - "governance"
+prerequisites:
+  - "./02-repositories-branches-and-pull-requests"
+related:
+  - "./04-bitbucket-pipelines-deployments-and-secrets"
+researchQuestions:
+  - "Which merge checks provide real safety without blocking useful flow?"
+---
+
+# Branch Permissions, Merge Checks, And Review
+
+Bitbucket protects important branches by combining human review, automated checks, and write restrictions.
+
+## What are we learning?
+
+We are learning how Branch permissions, Merge checks, default reviewers, pull request tasks, build statuses, and Code Insights work together.
+
+## Why does it matter?
+
+The most important branch in a repository is a shared coordination point. If anyone can rewrite it, merge unreviewed changes, or bypass tests, the team loses trust in the branch.
+
+## What problem does it solve?
+
+This page solves the policy problem: how to encode team safety rules without turning every change into manual ceremony.
+
+## Prerequisites
+
+Know pull requests, CI status, branch patterns, and the difference between private and shared branches.
+
+## Core concepts
+
+| Control | Purpose |
+| --- | --- |
+| Branch permissions | Restrict who can push, delete, or rewrite branch patterns |
+| Merge checks | Require conditions before merge |
+| Default reviewers | Automatically request people or groups |
+| Pull request tasks | Track required review fixes |
+| Build status | CI signal attached to commits |
+| Code Insights | Reports annotations and quality signals into Bitbucket |
+
+## Internal workings
+
+Before merge, Bitbucket evaluates the destination branch rules. A PR may need approvals, successful builds, resolved tasks, no requested changes, or other configured conditions. Code Insights can add reports from external tools so reviewers see test, coverage, lint, security, or quality feedback near the code.
+
+## Design decisions
+
+Use stricter rules for more important refs:
+
+| Branch pattern | Suggested policy |
+| --- | --- |
+| `main` | No direct push, required PR, passing builds, approvals |
+| `release/*` | Restricted writes, required release-owner review |
+| `hotfix/*` | Fast path but still reviewed and tested |
+| `feature/*` | Flexible, allow normal developer push |
+
+Policy should match risk. Too little policy breaks main. Too much policy trains people to bypass it.
+
+## Alternatives
+
+Manual review alone is flexible but inconsistent. Automated checks alone are fast but cannot judge design intent. Branch permissions alone prevent direct damage but do not prove quality. A mature Bitbucket setup combines all three.
+
+## Common misconceptions
+
+- "Merge checks prove code is good." They prove configured conditions passed.
+- "Default reviewers guarantee ownership." They route attention; people still need responsibility.
+- "Branch permissions are only for enterprises." Any team with shared main benefits from basic restrictions.
+- "Code Insights replaces CI." It surfaces results; CI or external analysis still produces them.
+
+## References
+
+- [Use branch permissions in Bitbucket Cloud](https://support.atlassian.com/bitbucket-cloud/docs/use-branch-permissions/)
+- [Suggest or require checks before a merge](https://support.atlassian.com/bitbucket-cloud/docs/suggest-or-require-checks-before-a-merge/)
+- [Default reviewers](https://support.atlassian.com/bitbucket-cloud/docs/add-default-reviewers-to-a-project/)
+- [Code Insights](https://support.atlassian.com/bitbucket-cloud/docs/code-insights/)
+
+## Related topics
+
+- [Repositories, Branches, And Pull Requests](./02-repositories-branches-and-pull-requests)
+- [Bitbucket Pipelines, Deployments, And Secrets](./04-bitbucket-pipelines-deployments-and-secrets)
+
+## Open questions
+
+- Which merge checks should be repository defaults versus project defaults?
+- Should hotfix branches bypass some checks or use a faster required check set?
+
+## Research opportunities
+
+- Measure whether stricter merge checks reduce incidents or only increase cycle time.
+- Build a branch-policy matrix for regulated and non-regulated teams.

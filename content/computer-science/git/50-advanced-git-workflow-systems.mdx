@@ -1,0 +1,200 @@
+---
+title: "Advanced Git Workflow Systems"
+description: "Advanced Git workflows for stacked branches, release trains, monorepos, sparse checkout, partial clone, rerere, worktrees, bisect, and enterprise collaboration."
+domain: "Computer Science"
+category: "Git"
+subcategory: "Git"
+difficulty: "research"
+stage: "research"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "git"
+  - "advanced-workflows"
+prerequisites:
+  - "./49-complete-git-end-to-end-field-guide"
+  - "./47-workflow-reasoning-and-recovery-playbooks"
+related:
+  - "../bitbucket/06-advanced-bitbucket-operating-model"
+  - "../github/33-github-collaboration-platform-mental-model"
+researchQuestions:
+  - "Which advanced Git workflows are worth teaching as systems rather than isolated tricks?"
+  - "How can large teams preserve velocity without losing review quality or recovery safety?"
+---
+
+# Advanced Git Workflow Systems
+
+Advanced Git workflows are not advanced because the commands are obscure. They are advanced because many developers, branches, repositories, services, and release lines must be coordinated without destroying trust in history.
+
+## What are we learning?
+
+We are learning how to design Git workflows for complex environments:
+
+- Stacked branches and dependent pull requests.
+- Release trains and hotfix lines.
+- Monorepo operations.
+- Sparse checkout and Partial clone.
+- `rerere` for repeated conflict resolutions.
+- Worktrees for parallel tasks.
+- Bisect-driven debugging.
+- Safe history rewriting.
+- Enterprise branch policies.
+
+## Why does it matter?
+
+Small teams can survive with simple feature branches. Larger systems need explicit workflow architecture. Without it, teams get review bottlenecks, branch drift, untested integration order, painful backports, lockfile conflicts, and emergency fixes that never return to main.
+
+## What problem does it solve?
+
+This page gives a decision system for advanced Git workflows. It helps a team choose a workflow based on release cadence, repository size, coupling, CI speed, review needs, and risk tolerance.
+
+## Prerequisites
+
+You should understand commits, refs, merge, rebase, cherry-pick, tags, remote-tracking refs, reflog, pull requests, and branch protection. You should also know that Git workflows are social contracts encoded partly in tools.
+
+## Core concepts
+
+## Workflow decision matrix
+
+| Constraint | Better workflow | Reason |
+| --- | --- | --- |
+| Many small independent changes | Trunk-based development | Keeps integration frequent and conflicts small |
+| Large dependent refactor | Stacked branches | Lets reviewers inspect logical layers |
+| Regulated release cadence | Release trains | Makes acceptance windows explicit |
+| Multiple supported versions | Release branches plus cherry-pick/backport policy | Keeps old versions patchable |
+| Large monorepo | Sparse checkout, Partial clone, path-aware CI | Reduces local and CI cost |
+| Repeated long-lived conflicts | `rerere` plus smaller integration batches | Reuses known conflict resolutions |
+| Multiple urgent tasks | `git worktree` | Avoids constant stashing and branch switching |
+
+## Internal workings
+
+## Stacked branches
+
+Stacked branches are dependent branches:
+
+```text
+main
+  -> api-contract
+      -> database-migration
+          -> UI-adapter
+```
+
+Each branch can become a pull request, but later branches depend on earlier ones. This is useful when one giant PR would be unreviewable.
+
+Risks:
+
+- Rebasing the bottom of the stack changes every branch above it.
+- Reviewers may miss cross-stack intent.
+- CI may pass for each PR but fail after the full stack lands.
+
+Recovery:
+
+- Keep stack names explicit.
+- Rebase from bottom to top.
+- Use `git range-diff` to verify what changed after rewriting.
+
+## Release trains
+
+Release trains batch accepted changes into scheduled departures:
+
+```text
+main -> release/2026-06-rail -> staging -> production
+```
+
+The train model works when the product wants predictable release windows. It is heavier than continuous deployment, but it gives QA, compliance, and product coordination a clear boundary.
+
+## Monorepo operations
+
+Monorepo operations need Git plus build-system discipline:
+
+- Path-aware ownership.
+- Path-aware CI.
+- Fast merge queue.
+- Sparse checkout for focused working trees.
+- Partial clone for reducing object transfer.
+- Large File Storage only for files that genuinely should not be normal Git blobs.
+
+Git alone does not solve monorepo scale. It provides the graph and object model; the organization must add tooling.
+
+## Sparse checkout
+
+Sparse checkout lets the working tree show only selected paths while the repository still knows about the broader history. It is useful when the repo is too large for every developer to materialize every file.
+
+## Partial clone
+
+Partial clone lets a client defer some object downloads, often blobs, until needed. It is a performance tool for large repositories, not a substitute for good repository design.
+
+## rerere
+
+`rerere` means "reuse recorded resolution." When enabled, Git can remember how a conflict was resolved and apply the same resolution if the conflict appears again.
+
+Use it when:
+
+- You repeatedly rebase a branch over a changing main.
+- A long-running integration branch hits the same conflicts.
+
+Avoid blind trust. Reused resolutions still need tests.
+
+## Design decisions
+
+Advanced workflow design should start with policy questions:
+
+1. Is main always releasable?
+2. How long may branches live?
+3. Who can rewrite which refs?
+4. What must pass before merge?
+5. How are releases cut?
+6. How are hotfixes returned to main?
+7. How are dependent changes reviewed?
+8. How are large files and generated files handled?
+9. How does the team recover from a bad merge?
+
+Only after that should a team choose commands.
+
+## Alternatives
+
+| Pattern | Best when | Not ideal when |
+| --- | --- | --- |
+| Trunk-based | CI is fast, tests are trusted, feature flags exist | Long manual QA gates dominate |
+| Git Flow | Multiple maintained release lines exist | Team wants high integration speed |
+| GitHub/Bitbucket Flow | PR-centered teams with protected main | Large dependent change sets need stacking |
+| Stacked PRs | Logical dependency chain is real | Team lacks tooling or reviewers cannot track stack |
+| Release train | Predictability matters | Urgent continuous deployment is expected |
+
+## Common misconceptions
+
+- "Advanced means more branches." Advanced means clearer boundaries and safer integration.
+- "Monorepo means one Git workflow." Monorepos often need multiple workflow lanes by path, ownership, and release type.
+- "Stacked branches are just messy branches." Good stacks are intentionally ordered review units.
+- "Partial clone fixes all large repo problems." It reduces transfer cost; it does not solve ownership, build, or test scale.
+- "`rerere` resolves conflicts safely." It reuses a prior resolution. Safety still comes from review and tests.
+
+## References
+
+- [git worktree](https://git-scm.com/docs/git-worktree)
+- [git range-diff](https://git-scm.com/docs/git-range-diff)
+- [git rerere](https://git-scm.com/docs/git-rerere)
+- [git sparse-checkout](https://git-scm.com/docs/git-sparse-checkout)
+- [Partial clone design notes](https://git-scm.com/docs/partial-clone)
+- [git bisect](https://git-scm.com/docs/git-bisect)
+- [Trunk Based Development](https://trunkbaseddevelopment.com/)
+- [Pro Git: Distributed Workflows](https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows)
+
+## Related topics
+
+- [Complete Git End-To-End Field Guide](./49-complete-git-end-to-end-field-guide)
+- [Workflow Reasoning And Recovery Playbooks](./47-workflow-reasoning-and-recovery-playbooks)
+- [Advanced Bitbucket Operating Model](../bitbucket/06-advanced-bitbucket-operating-model)
+
+## Open questions
+
+- Should stacked branches be taught before or after interactive rebase?
+- Which workflow should be recommended for AI-assisted coding branches?
+- How should merge queues represent stacked PR dependencies?
+
+## Research opportunities
+
+- Build a stack visualizer that explains `range-diff` after every rebase.
+- Create a monorepo workflow matrix by path ownership, release cadence, and CI cost.
+- Evaluate how AI can detect semantic conflicts before text conflicts happen.

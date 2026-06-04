@@ -1,0 +1,408 @@
+---
+title: "Workflow Reasoning And Recovery Playbooks"
+description: "Practical Git workflow reasoning for daily work, team collaboration, pull-request updates, merge conflicts, and recovery."
+domain: "Computer Science"
+category: "Git"
+subcategory: "Git"
+difficulty: "research"
+stage: "research"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "git"
+  - "workflows"
+  - "recovery"
+prerequisites:
+  - "./05-git-mental-model"
+  - "./11-branch-workflows"
+  - "./17-remotes-and-tracking-branches"
+related:
+  - "./14-rebase-foundations"
+  - "./30-reflog"
+  - "../github/05-pull-requests-as-review-units"
+researchQuestions:
+  - "Which Git recovery workflows are safe enough to teach as defaults?"
+  - "How should teams choose between merge, rebase, squash, and cherry-pick policies?"
+---
+
+# Workflow Reasoning And Recovery Playbooks
+
+Git workflows are not rituals. They are decisions about how to move names through a graph while preserving useful history and avoiding surprise for other people.
+
+## What are we learning?
+
+We are learning how to reason through common Git workflows instead of memorizing command sequences. Each playbook names the situation, the goal, the recommended action, alternatives, tradeoffs, risks, and recovery.
+
+## Why does it matter?
+
+Teams do not break Git because they lack commands. They break Git because they cannot predict consequences:
+
+- A merge commit appears and they do not know why.
+- A rebase rewrites commits and collaborators lose their base.
+- A force push updates a shared branch.
+- A conflict resolution accidentally drops someone else's work.
+- A hotfix is merged to production but not returned to the development line.
+
+Professional Git use is mostly consequence management.
+
+## What problem does it solve?
+
+This page solves the gap between "I know commands" and "I can safely operate in a team repository." It gives the learner a decision table and recovery playbooks for the most common situations.
+
+## Common beginner confusion
+
+| Confusion | Practical correction |
+| --- | --- |
+| "Pull before every command" | Fetch first when you need information. Integrate only when you know how you want histories combined. |
+| "Merge and rebase are style choices" | They create different graph shapes and different collaboration risks. |
+| "Force push means delete remote work" | Force push asks the remote to move a ref. `--force-with-lease` checks that the remote ref is still what you last observed. |
+| "Conflict resolution is about picking one side" | It is about constructing the correct final file, which may include both sides or neither side. |
+| "Undo means reset" | Undo can mean move a ref, restore files, create a new inverse commit, recover from reflog, or revert a merge. |
+
+## Prerequisites
+
+Know these before using the playbooks:
+
+- A commit points to a tree and parent commits.
+- A branch name points to one commit.
+- HEAD usually points to the current branch.
+- Remote-tracking refs are observations, not live remote branches.
+- Reflog records where local refs recently pointed.
+
+## Core concepts
+
+## Workflow decision table
+
+| Situation | Goal | Default action | Alternative | Risk | Recovery |
+| --- | --- | --- | --- | --- | --- |
+| Start a feature | Isolate work from main | `git switch -c feature/name origin/main` | Create from local `main` after fetch | Starting from stale main | Rebase or merge later |
+| Update local knowledge | Learn what changed remotely | `git fetch --prune` | `git pull` | Pull integrates before you inspect | Use reflog if pull created an unwanted merge |
+| Test feature against latest main | Keep PR current | Rebase private feature branch onto `origin/main` | Merge `origin/main` into feature | Rebase rewrites local commits; merge adds history node | `git reflog`, then reset to pre-rebase/pre-merge |
+| Shared team branch | Preserve everyone's base | Merge main into shared branch | Coordinated rebase only if team agrees | Rebase disrupts collaborators | Restore branch from remote or reflog |
+| Clean PR history | Make review easy | Interactive rebase before first review or before merge if branch is private | Squash merge on GitHub | Rewriting after review can hide review context | Use PR commits tab and reflog |
+| Hotfix production | Patch released code quickly | Branch from release tag/main, merge back to main | Cherry-pick into release | Divergent fixes if not backported | Track hotfix commit and merge/cherry-pick to all maintained lines |
+| Bad commit on main | Undo without hiding history | `git revert <sha>` | Reset main only before sharing | Reset shared main destroys expected history | Revert the reset if pushed, or restore remote ref with admin coordination |
+
+## Internal workings
+
+### What happens when you merge main into a feature branch?
+
+```text
+before:
+
+main:      A---B---C
+               \
+feature:        D---E
+
+after merge:
+
+main:      A---B---C
+               \   \
+feature:        D---E---M
+```
+
+The merge commit `M` has two parents. It says: "This branch now contains both the feature line and the main line."
+
+Recommended when:
+
+- The feature branch is shared.
+- You want to preserve the exact integration event.
+- Your team values explicit merge history.
+
+Avoid when:
+
+- You are cleaning a private branch for review.
+- The team requires a linear main history.
+
+Recovery:
+
+```bash
+git reflog
+git reset --hard HEAD@{1}
+```
+
+Use this only when the unwanted merge is local or when the branch is not shared.
+
+### What happens when you rebase a feature branch onto main?
+
+```text
+before:
+
+main:      A---B---C
+               \
+feature:        D---E
+
+after rebase:
+
+main:      A---B---C
+                   \
+feature:            D'---E'
+```
+
+Git replays the patch introduced by `D` and `E` onto `C`, creating new commits `D'` and `E'`. The branch name moves to `E'`.
+
+Recommended when:
+
+- The branch is private or only you are using it.
+- You want a clean story before review.
+- Your team uses linear history.
+
+Avoid when:
+
+- Other people based work on your branch.
+- You do not understand which commits are being replayed.
+
+Recovery:
+
+```bash
+git reflog
+git reset --hard <old-feature-tip>
+```
+
+## Design decisions
+
+The Atlas should teach workflows as state transitions:
+
+1. Draw the graph before.
+2. State the desired graph after.
+3. Choose the command that produces that graph.
+4. Verify with `git status`, `git log --oneline --graph --decorate --all`, and tests.
+5. Record the recovery path before using destructive commands.
+
+This makes workflows auditable.
+
+## Alternatives
+
+| Workflow family | Best for | Watch out for |
+| --- | --- | --- |
+| GitHub Flow | Continuous delivery, small teams, web services | Long-running branches become painful |
+| Git Flow | scheduled releases, multiple maintained versions | Heavy branches and delayed integration |
+| Trunk-based development | high integration frequency, strong test automation | Requires discipline, feature flags, and fast CI |
+| Fork-based open source | unknown contributors and maintainer-controlled merge | Slower collaboration and more remote coordination |
+| Stacked changes | dependent review units and large refactors | Tooling and reviewer mental load |
+
+No workflow is universally correct. The right workflow depends on release cadence, test speed, team size, compliance, and how expensive broken main is.
+
+## Common misconceptions
+
+- "Large companies always prefer rebase." Many teams prefer linear main, but shared feature branches, release branches, and monorepos often use explicit merges or merge queues.
+- "Squashing is always cleaner." Squashing can hide useful intermediate reasoning. It is best when the PR itself is the review unit.
+- "Cherry-pick is a normal sync tool." Cherry-pick is precise duplication of a change. Overuse creates parallel histories that must be tracked carefully.
+- "The conflict marker tells me the answer." Conflict markers show incompatible edits. Human intent decides the final file.
+
+## Daily Git workflows
+
+### Starting a feature
+
+Situation: main contains latest accepted code.
+
+Goal: create a branch from current main.
+
+Recommended:
+
+```bash
+git fetch --prune origin
+git switch -c feature/auth origin/main
+```
+
+Verify:
+
+```bash
+git status
+git log --oneline --decorate -5
+```
+
+### Updating a PR before review
+
+Situation: your PR branch is behind main.
+
+Goal: test against latest main and keep review understandable.
+
+If branch is private:
+
+```bash
+git fetch origin
+git rebase origin/main
+git push --force-with-lease
+```
+
+If branch is shared:
+
+```bash
+git fetch origin
+git merge origin/main
+git push
+```
+
+Tradeoff: rebase gives a cleaner story but rewrites local commits. Merge preserves shared commit identities but adds an integration commit.
+
+### Resolving conflicts
+
+Use a discipline:
+
+1. Read both sides.
+2. Understand why both edits touched the same region.
+3. Build the final intended file.
+4. Run tests.
+5. Stage the resolved file.
+6. Continue the merge or rebase.
+
+Commands:
+
+```bash
+git status
+git diff
+git add <resolved-file>
+git merge --continue
+```
+
+or:
+
+```bash
+git rebase --continue
+```
+
+### Squashing commits
+
+Use when the PR has noisy local commits that do not help future readers:
+
+```bash
+git rebase -i origin/main
+```
+
+Keep commits separate when each commit is a meaningful review or rollback unit.
+
+### Emergency fixes
+
+Use a hotfix branch:
+
+```bash
+git fetch origin
+git switch -c hotfix/payment-timeout origin/main
+```
+
+After merge, ensure the fix returns to every active release or development line. The mistake is not the hotfix. The mistake is letting release history and main diverge silently.
+
+## Team collaboration
+
+Team Git is mostly policy:
+
+- Who may move protected refs?
+- Which checks must pass before merge?
+- Who owns which files?
+- Is main always releasable?
+- Are force pushes allowed on PR branches?
+- Are merges, squash merges, and rebase merges all allowed?
+- Who resolves conflicts in a shared ownership area?
+
+GitHub expresses these policies through branch protection, required reviews, status checks, CODEOWNERS, merge queue, and repository permissions.
+
+## Recovery playbooks
+
+### Lost commit
+
+Symptoms: a commit disappeared after reset, rebase, or branch deletion.
+
+Do:
+
+```bash
+git reflog
+git show <sha>
+git branch recovered-work <sha>
+```
+
+Mental model: if an object is still in the local object database and reachable from reflog or another ref, you can name it again.
+
+### Committed on the wrong branch
+
+If the commit is local:
+
+```bash
+git branch correct-branch
+git reset --hard HEAD~1
+git switch correct-branch
+```
+
+If already pushed, prefer reverting or opening a corrective PR unless the remote branch is private.
+
+### Bad merge
+
+If local only:
+
+```bash
+git reflog
+git reset --hard HEAD@{1}
+```
+
+If already shared:
+
+```bash
+git revert -m 1 <merge-commit-sha>
+```
+
+The `-m 1` tells Git which parent is the mainline.
+
+### Accidental force push
+
+Stop. Do not pile on more pushes.
+
+1. Ask teammates not to push to the branch.
+2. Find the previous remote tip from a teammate, CI log, PR event, or local reflog.
+3. Restore the ref deliberately:
+
+```bash
+git push --force-with-lease origin <known-good-sha>:<branch>
+```
+
+Use admin help for protected branches.
+
+### Recovering deleted branch
+
+If local:
+
+```bash
+git reflog
+git branch restored <sha>
+```
+
+If remote:
+
+```bash
+git fetch origin
+git branch restored origin/old-branch
+```
+
+or recover from the pull request, CI logs, or another clone.
+
+## References
+
+- [Git merge documentation](https://git-scm.com/docs/git-merge)
+- [Git rebase documentation](https://git-scm.com/docs/git-rebase)
+- [Git reset documentation](https://git-scm.com/docs/git-reset)
+- [Git revert documentation](https://git-scm.com/docs/git-revert)
+- [Git reflog documentation](https://git-scm.com/docs/git-reflog)
+- [Pro Git: Git Branching](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell)
+- [Pro Git: Distributed Git](https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows)
+- [GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow)
+- [Google Engineering Practices: Code Review](https://google.github.io/eng-practices/review/)
+- [Trunk Based Development](https://trunkbaseddevelopment.com/)
+
+## Related topics
+
+- [Merge Foundations](./12-merge-foundations)
+- [Rebase Foundations](./14-rebase-foundations)
+- [Reflog](./30-reflog)
+- [Pull Requests As Review Units](../github/05-pull-requests-as-review-units)
+
+## Open questions
+
+- Should the Atlas recommend `pull --rebase` as a default, or teach explicit `fetch` plus chosen integration first?
+- Should branch recovery exercises be mandatory before teaching history rewriting?
+- Should the team workflow section include diagrams for each release style?
+
+## Research opportunities
+
+- Create executable sandbox exercises where learners intentionally break and recover repositories.
+- Build a decision helper that reads branch state and proposes merge, rebase, revert, or restore with risk labels.
+- Compare conflict-resolution outcomes between command-line Git, IDE tools, and AI-assisted merge tools.

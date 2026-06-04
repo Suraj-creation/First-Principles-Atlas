@@ -1,0 +1,125 @@
+---
+title: "Advanced Bitbucket Operating Model"
+description: "Production-grade Bitbucket operating patterns for branch strategy, review policy, pipelines, deployments, monorepos, migrations, and enterprise governance."
+domain: "Computer Science"
+category: "Bitbucket"
+subcategory: "Bitbucket"
+difficulty: "research"
+stage: "research"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "bitbucket"
+  - "operations"
+prerequisites:
+  - "./04-bitbucket-pipelines-deployments-and-secrets"
+  - "./05-jira-governance-security-and-migration"
+related:
+  - "../git/50-advanced-git-workflow-systems"
+researchQuestions:
+  - "What does production-grade Bitbucket operation require beyond repository hosting?"
+---
+
+# Advanced Bitbucket Operating Model
+
+A production-grade Bitbucket setup treats repositories, review, CI/CD, deployments, permissions, and Jira traceability as one system.
+
+## What are we learning?
+
+We are learning how to operate Bitbucket at team and enterprise scale:
+
+- workspace and project structure;
+- repository ownership;
+- branch strategy;
+- pull request policy;
+- merge checks;
+- pipelines;
+- deployments;
+- secret governance;
+- monorepo support;
+- migration and auditability.
+
+## Why does it matter?
+
+At small scale, informal rules work. At production scale, informal rules become outages, leaked secrets, broken release branches, slow reviews, and unclear ownership.
+
+## What problem does it solve?
+
+This page solves the operating-model problem: how to make Bitbucket reliable enough for serious engineering without making it so heavy that developers stop moving.
+
+## Prerequisites
+
+Understand Bitbucket PRs, branch permissions, merge checks, Pipelines, deployments, Jira integration, and advanced Git workflows.
+
+## Core concepts
+
+| Operating area | Production-grade question |
+| --- | --- |
+| Ownership | Who owns each repository and path? |
+| Branching | Which branches are protected and why? |
+| Review | What approval is required by risk level? |
+| CI/CD | Which checks are fast, required, and trusted? |
+| Deployment | Which environments exist and who can deploy? |
+| Secrets | Where are variables stored and who can edit them? |
+| Audit | Can we trace issue to code to deployment? |
+| Migration | Can old permissions and CI behavior be reproduced or intentionally changed? |
+
+## Internal workings
+
+Production Bitbucket is an event system:
+
+```text
+Jira issue -> branch -> commit -> PR -> review -> pipeline -> merge check -> deployment -> audit trail
+```
+
+Every arrow should be intentional. If a team cannot explain an arrow, the workflow will fail under pressure.
+
+## Design decisions
+
+Recommended default model:
+
+| Layer | Recommendation |
+| --- | --- |
+| Workspace | Company or major business boundary |
+| Project | Product/platform boundary |
+| Repository | Deployable service, shared library, or controlled monorepo |
+| Main branch | Protected, PR-only, required checks |
+| Release branch | Protected, release-owner review |
+| Feature branch | Flexible, short-lived |
+| Pipeline | Fast PR lane, deeper main lane, gated deployment lane |
+| Secrets | Scoped to repository or deployment environment, never committed |
+
+## Alternatives
+
+Small teams can use a lighter model: one workspace, one Project, simple PR checks, and a few deployment environments. Enterprises may need multiple Projects, group-managed permissions, Data Center, audit integration, and formal change windows.
+
+## Common misconceptions
+
+- "Production-grade means maximum restrictions." It means the right restriction at the right boundary.
+- "Every repo needs the same pipeline." Shared standards are useful, but services may have different risk and deployment needs.
+- "Bitbucket policy can fix unclear ownership." Tools encode ownership; they do not create it.
+
+## References
+
+- [Bitbucket branch permissions](https://support.atlassian.com/bitbucket-cloud/docs/use-branch-permissions/)
+- [Merge checks](https://support.atlassian.com/bitbucket-cloud/docs/suggest-or-require-checks-before-a-merge/)
+- [Bitbucket Pipelines](https://support.atlassian.com/bitbucket-cloud/docs/get-started-with-bitbucket-pipelines/)
+- [Deployments](https://support.atlassian.com/bitbucket-cloud/docs/set-up-and-monitor-deployments/)
+- [Use Bitbucket with Jira](https://support.atlassian.com/bitbucket-cloud/docs/use-bitbucket-with-jira/)
+- [Advanced Git Workflow Systems](../git/50-advanced-git-workflow-systems)
+
+## Related topics
+
+- [Advanced Git Workflow Systems](../git/50-advanced-git-workflow-systems)
+- [Bitbucket Reference Library](./07-bitbucket-reference-library)
+
+## Open questions
+
+- Should Bitbucket monorepos use one pipeline or path-selected child pipelines?
+- How strict should hotfix branch merge checks be?
+
+## Research opportunities
+
+- Create a Bitbucket operating model template for startup, scaleup, and enterprise teams.
+- Build a Jira-to-deployment traceability dashboard from Bitbucket APIs.

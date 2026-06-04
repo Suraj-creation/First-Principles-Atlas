@@ -1,0 +1,120 @@
+---
+title: "Bitbucket Platform Mental Model"
+description: "A systems model of Bitbucket Cloud and Bitbucket Data Center as Git hosting, review, CI/CD, policy, and Atlassian workflow infrastructure."
+domain: "Computer Science"
+category: "Bitbucket"
+subcategory: "Bitbucket"
+difficulty: "intermediate"
+stage: "foundation"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "bitbucket"
+  - "platform"
+prerequisites:
+  - "./00-why-bitbucket-exists"
+related:
+  - "./02-repositories-branches-and-pull-requests"
+  - "./07-bitbucket-reference-library"
+researchQuestions:
+  - "What mental model best explains Bitbucket Cloud and Bitbucket Data Center together?"
+---
+
+# Bitbucket Platform Mental Model
+
+Bitbucket is best understood as a policy and collaboration layer around Git repositories.
+
+## What are we learning?
+
+We are learning how Bitbucket's parts fit together:
+
+```text
+workspace -> project -> repository -> branch -> pull request -> checks -> merge -> deployment -> Jira trace
+```
+
+For self-managed enterprises, Bitbucket Data Center adds operational concerns such as hosting, scaling, backups, authentication, and internal network policy.
+
+## Why does it matter?
+
+When teams understand the platform model, they stop treating Bitbucket as a page of buttons. They can design repositories, permissions, pipelines, and review flows intentionally.
+
+## What problem does it solve?
+
+The platform model solves coordination. A team needs to know which repository owns which system, who can approve high-risk changes, which checks block merges, and where deployment state is recorded.
+
+## Prerequisites
+
+Know the difference between Git, a hosted repository, CI/CD, and an issue tracker.
+
+## Core concepts
+
+| Layer | Responsibility |
+| --- | --- |
+| Identity | Users, groups, workspace membership, access tokens, app passwords, SSH keys |
+| Organization | Workspaces, Projects, repositories |
+| Git hosting | Refs, branches, clone/fetch/push, pull request refs |
+| Review | Pull requests, comments, tasks, approvals, default reviewers |
+| Policy | Branch permissions, Merge checks, required builds |
+| Automation | Bitbucket Pipelines, deployments, artifacts, caches |
+| Integration | Jira issues, Code Insights, webhooks, REST API |
+
+## Internal workings
+
+Bitbucket reacts to events:
+
+```text
+push event
+  updates branch
+  refreshes pull request diff
+  starts matching pipeline
+  updates build status
+  re-evaluates merge checks
+  links commits to Jira keys when present
+```
+
+This event model explains why branch naming, commit messages, and Jira issue keys matter in Atlassian-heavy workflows.
+
+## Design decisions
+
+Design Bitbucket around boundaries:
+
+- Workspace for organizational boundary.
+- Project for product or platform area.
+- Repository for deployable or library ownership.
+- Branch pattern for risk level.
+- Pull request for review unit.
+- Pipeline for repeatable verification.
+- Deployment environment for release traceability.
+
+## Alternatives
+
+Bitbucket Cloud reduces hosting operations but gives less infrastructure control. Bitbucket Data Center gives self-managed control but requires platform operations. GitHub and GitLab shift the integration model away from Atlassian-centered workflows.
+
+## Common misconceptions
+
+- "Bitbucket Cloud and Bitbucket Data Center are the same product with different hosting." They share concepts, but operations, administration, and some features differ.
+- "A workspace is just a namespace." It is also a permission and administration boundary.
+- "Pipelines are optional extras." In production teams, checks are part of merge policy.
+
+## References
+
+- [Bitbucket Cloud documentation](https://support.atlassian.com/bitbucket-cloud/)
+- [Bitbucket Cloud workspaces](https://support.atlassian.com/bitbucket-cloud/docs/what-is-a-workspace/)
+- [Bitbucket Cloud projects](https://support.atlassian.com/bitbucket-cloud/docs/group-repositories-into-projects/)
+- [Bitbucket Data Center documentation](https://confluence.atlassian.com/bitbucketserver)
+
+## Related topics
+
+- [Repositories, Branches, And Pull Requests](./02-repositories-branches-and-pull-requests)
+- [Jira, Governance, Security, And Migration](./05-jira-governance-security-and-migration)
+
+## Open questions
+
+- Should one workspace contain all company repositories, or should boundaries follow business units?
+- How should teams separate product Projects from platform Projects?
+
+## Research opportunities
+
+- Design a Bitbucket workspace architecture for startup, enterprise, and open-source contexts.
+- Compare Bitbucket Cloud and Bitbucket Data Center governance models.

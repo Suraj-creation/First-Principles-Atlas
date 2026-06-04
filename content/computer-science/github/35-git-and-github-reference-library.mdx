@@ -1,0 +1,215 @@
+---
+title: "Git And GitHub Reference Library"
+description: "A comprehensive source map for building the Git and GitHub Atlas from official manuals, books, engineering practices, platform docs, and research directions."
+domain: "Computer Science"
+category: "GitHub"
+subcategory: "GitHub"
+difficulty: "research"
+stage: "research"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "git"
+  - "github"
+  - "references"
+prerequisites:
+  - "../git/46-deep-git-github-learning-roadmap"
+related:
+  - "../git/48-git-internals-from-filesystem-to-replication"
+  - "./34-ai-native-git-and-github-futures"
+researchQuestions:
+  - "Which source categories should be treated as canonical for each Git and GitHub subtopic?"
+  - "How can the Atlas synthesize books and docs without becoming a copyright-dependent summary?"
+---
+
+# Git And GitHub Reference Library
+
+This is the source map for the Git and GitHub learning system. The Atlas should synthesize these materials into original, first-principles explanations so a learner can get the core mental model here, then use the sources for exact syntax, edge cases, and deeper research.
+
+## What are we learning?
+
+We are learning which references should inform each part of the Git and GitHub curriculum: beginner mental models, workflows, internals, collaboration, security, automation, governance, and future AI-native improvements.
+
+## Why does it matter?
+
+Without a reference map, content becomes opinion. With a reference map, the Atlas can remain concise while still being grounded in authoritative material.
+
+The goal is not to copy books. The goal is to cover the concepts those books teach in original language, with links back to the sources that establish command behavior, platform behavior, and engineering practice.
+
+## What problem does it solve?
+
+It solves three problems:
+
+1. Coverage: we can see which sources back each topic.
+2. Trust: readers know where claims come from.
+3. Maintenance: future edits can update source-backed pages without searching from scratch.
+
+## Common beginner confusion
+
+| Confusion | Better source habit |
+| --- | --- |
+| "A blog said this workflow is best." | Treat blogs as situated advice. Check official docs and team context. |
+| "The book says Git stores snapshots, so diffs do not matter." | Git stores snapshot objects, but diffs are essential computed views for review. |
+| "GitHub Docs explain Git." | GitHub Docs explain the platform. Use Git docs for Git command and object behavior. |
+| "Stack Overflow answer means policy." | Answers solve local symptoms. Team workflow needs explicit policy and recovery paths. |
+
+## Prerequisites
+
+Use this library after reading the roadmap. It is organized for authors and advanced learners, not as a first page for beginners.
+
+## Core concepts
+
+## Comprehensive reference library
+
+### Official Git sources
+
+| Source | Use it for | Atlas coverage target |
+| --- | --- | --- |
+| [Git reference manual](https://git-scm.com/docs) | Exact command behavior and options | Every command page should link to its command doc |
+| [Pro Git book](https://git-scm.com/book/en/v2) | Beginner-to-advanced conceptual coverage | Mental models for branching, remotes, distributed workflows, internals |
+| [Git glossary](https://git-scm.com/docs/gitglossary) | Precise vocabulary | Preventing ambiguity around refs, paths, index, object names |
+| [Repository layout](https://git-scm.com/docs/gitrepository-layout) | `.git` directory structure | Internals and mini-Git implementation |
+| [Index format](https://git-scm.com/docs/index-format) | Staging area file structure | Index internals and performance |
+| [Pack format](https://git-scm.com/docs/pack-format) | Object packing and transfer | Packfiles, clone/fetch/push, storage |
+| [Protocol v2](https://git-scm.com/docs/protocol-v2) | Client-server exchange | Remote sync, fetch negotiation, hosting platforms |
+| [Commit-graph technical doc](https://github.com/git/git/blob/master/Documentation/technical/commit-graph.adoc) | Commit graph acceleration | Large repositories, history traversal |
+
+### Git workflow commands
+
+| Source | Use it for |
+| --- | --- |
+| [git-merge](https://git-scm.com/docs/git-merge) | Merge commits, conflict states, abort/continue |
+| [git-rebase](https://git-scm.com/docs/git-rebase) | Replay, interactive cleanup, autosquash, conflict handling |
+| [git-reset](https://git-scm.com/docs/git-reset) | Ref movement and index/working tree reset modes |
+| [git-revert](https://git-scm.com/docs/git-revert) | Safe shared-history undo |
+| [git-reflog](https://git-scm.com/docs/git-reflog) | Recovery after ref movement |
+| [git-cherry-pick](https://git-scm.com/docs/git-cherry-pick) | Applying specific commits across lines |
+| [git-bisect](https://git-scm.com/docs/git-bisect) | Debugging history by binary search |
+| [git-worktree](https://git-scm.com/docs/git-worktree) | Multiple working trees from one repository |
+
+### Books and long-form learning
+
+| Source | Use it for | Notes |
+| --- | --- | --- |
+| [Pro Git](https://git-scm.com/book/en/v2) by Scott Chacon and Ben Straub | Broad conceptual and practical Git coverage | Canonical free book; link heavily |
+| Version Control with Git by Loeliger and McCullough | Deeper conceptual explanations and workflows | Use as conceptual inspiration; do not copy text |
+| Git Internals by Scott Chacon | Object model and plumbing orientation | Many ideas overlap with Pro Git internals |
+| Software Engineering at Google | Code review, trunk-based development, large-scale engineering culture | Use for engineering practice, not Git syntax |
+| Site Reliability Engineering resources | Release, rollback, and production safety framing | Useful for hotfix and release workflow pages |
+
+### GitHub platform sources
+
+| Source | Use it for |
+| --- | --- |
+| [GitHub Docs](https://docs.github.com/en) | Canonical platform behavior |
+| [GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow) | Basic branch and PR workflow |
+| [Pull requests](https://docs.github.com/en/pull-requests) | PR lifecycle, review, merging |
+| [Protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches) | Branch rules and required checks |
+| [Merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue) | Serialized tested integration |
+| [GitHub Actions](https://docs.github.com/en/actions) | Workflow automation |
+| [Workflow syntax](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions) | Exact YAML behavior |
+| [CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners) | Ownership-based review routing |
+| [REST API](https://docs.github.com/en/rest) | Platform integration |
+| [GraphQL API](https://docs.github.com/en/graphql) | Structured platform queries |
+| [Webhooks](https://docs.github.com/en/webhooks) | Event-driven integrations |
+| [GitHub Apps](https://docs.github.com/en/apps) | App-based automation and permissions |
+| [Code scanning](https://docs.github.com/en/code-security/code-scanning) | Static-analysis security workflows |
+| [Dependabot](https://docs.github.com/en/code-security/dependabot) | Dependency update and vulnerability workflow |
+| [Secret scanning](https://docs.github.com/en/code-security/secret-scanning) | Credential leakage detection |
+
+### Engineering practice sources
+
+| Source | Use it for |
+| --- | --- |
+| [Google Engineering Practices: Code Review](https://google.github.io/eng-practices/review/) | Reviewer standards, CL size, review discipline |
+| [Trunk Based Development](https://trunkbaseddevelopment.com/) | Short-lived branches, continuous integration, release branches |
+| [Conventional Commits](https://www.conventionalcommits.org/) | Commit message structure for automation |
+| [Keep a Changelog](https://keepachangelog.com/) | Release note structure |
+| [The Twelve-Factor App](https://12factor.net/) | Deployment and config principles that affect CI/CD workflows |
+
+### Advanced and research-adjacent sources
+
+| Source | Use it for |
+| --- | --- |
+| [Git technical documentation](https://github.com/git/git/tree/master/Documentation/technical) | Maintenance-level Git internals |
+| [Git mailing list archives](https://lore.kernel.org/git/) | Design discussions and implementation history |
+| [GitHub Next](https://githubnext.com/) | Experimental developer-tooling ideas |
+| [Software Engineering at Google](https://abseil.io/resources/swe-book) | Large-scale engineering, code review, and trunk-based practices |
+| [OpenSSF Scorecard](https://github.com/ossf/scorecard) | Repository security posture signals |
+
+## Internal workings
+
+Reference quality should be recorded per page:
+
+```text
+claim type:
+  command behavior -> official Git docs
+  platform behavior -> GitHub Docs
+  workflow recommendation -> official docs plus engineering practice source
+  advanced internals -> Git technical docs
+  future idea -> clearly labeled research or proposal
+```
+
+This prevents workflow opinions from being presented as universal truth.
+
+## Design decisions
+
+The Atlas should use source classes:
+
+| Class | Trust level | Use |
+| --- | --- | --- |
+| Official command/platform docs | Highest for behavior | Syntax, defaults, constraints |
+| Official books | High for conceptual learning | Mental models and examples |
+| Engineering practice guides | High but contextual | Team workflows and review norms |
+| Blogs | Medium | Case studies and tradeoffs |
+| Forum answers | Low unless verified | Symptoms, edge cases, debugging clues |
+| Experiments | Clearly labeled | Future and research sections |
+
+## Alternatives
+
+An alternative is to put references only at the bottom of each page. That is still necessary, but not sufficient. A central library lets future authors see coverage gaps and avoid re-researching the same source set.
+
+## Common misconceptions
+
+- "Comprehensive means long." Comprehensive means all important concepts are covered at the right depth. Some sections should be short.
+- "References are decorations." References are the maintenance backbone of the Atlas.
+- "Books can be replaced by summaries." The Atlas can replace first-pass learning for many readers, but canonical books and docs remain sources for exactness and further study.
+
+## Advanced section: coverage contract for replacing first-pass book reading
+
+To make the Atlas strong enough that readers do not need to start by reading whole books, each major Git/GitHub area should have:
+
+1. A first-principles explanation.
+2. A confusion map.
+3. A visual or state model.
+4. A practical workflow.
+5. A failure and recovery section.
+6. A professional/team-use section.
+7. A source-backed reference list.
+8. A short memory summary.
+
+This does not copy books. It absorbs their conceptual value into an editable, source-linked knowledge system.
+
+## References
+
+This page is itself the reference hub. Page-level references should still be repeated near the exact claim they support.
+
+## Related topics
+
+- [Deep Git And GitHub Learning Roadmap](../git/46-deep-git-github-learning-roadmap)
+- [Workflow Reasoning And Recovery Playbooks](../git/47-workflow-reasoning-and-recovery-playbooks)
+- [Git Internals From Filesystem To Replication](../git/48-git-internals-from-filesystem-to-replication)
+- [AI-Native Git And GitHub Futures](./34-ai-native-git-and-github-futures)
+
+## Open questions
+
+- Should every page distinguish "official behavior", "team convention", and "opinionated recommendation"?
+- Should the Atlas maintain a bibliography file in addition to page-level references?
+- Which books and long-form sources should be added after the first Git/GitHub pass?
+
+## Research opportunities
+
+- Build a citation linter that checks whether pages have source links for command behavior, platform behavior, and workflow advice.
+- Create a source-to-topic matrix for Git/GitHub coverage.
+- Track which sections are original synthesis, official behavior, or future research proposals.

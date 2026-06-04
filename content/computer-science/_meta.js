@@ -12,6 +12,12 @@ export default {
       "timestamp": false
     }
   },
+  "bitbucket": {
+    "title": "Bitbucket",
+    "theme": {
+      "timestamp": false
+    }
+  },
   "version-control-systems": {
     "title": "Version Control Systems",
     "theme": {

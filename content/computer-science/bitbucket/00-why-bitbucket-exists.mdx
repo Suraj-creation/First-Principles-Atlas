@@ -1,0 +1,116 @@
+---
+title: "Why Bitbucket Exists"
+description: "A first-principles explanation of why Bitbucket exists as a Git collaboration platform, especially for teams in the Atlassian ecosystem."
+domain: "Computer Science"
+category: "Bitbucket"
+subcategory: "Bitbucket"
+difficulty: "beginner"
+stage: "foundation"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "bitbucket"
+  - "collaboration"
+prerequisites:
+  - "../git/49-complete-git-end-to-end-field-guide"
+related:
+  - "./01-bitbucket-platform-mental-model"
+  - "../github/33-github-collaboration-platform-mental-model"
+researchQuestions:
+  - "When is Bitbucket the right collaboration layer around Git?"
+---
+
+# Why Bitbucket Exists
+
+Bitbucket exists because Git alone stores and exchanges history, but teams also need review, permissions, automation, issue context, deployment traceability, and governance.
+
+## What are we learning?
+
+We are learning Bitbucket as a hosted Git collaboration system. Bitbucket Cloud gives teams Workspaces, Projects, repositories, Pull requests, Branch permissions, Merge checks, Bitbucket Pipelines, Deployments, Variables and secrets, Code Insights, and Jira integration.
+
+## Why does it matter?
+
+Many teams choose Bitbucket because their work already lives in Atlassian: Jira for planning, Confluence for documentation, and Bitbucket for code. The value is not only repository hosting. The value is connecting code changes to work items, reviews, checks, deployments, and organization policy.
+
+## What problem does it solve?
+
+Git answers: "What changed, where is the history, and how do repositories synchronize?"
+
+Bitbucket answers: "Who may change important branches, who reviewed the change, what issue motivated it, what checks ran, what environment received it, and how does the team audit the path from idea to production?"
+
+## Prerequisites
+
+Know Git commits, branches, remotes, push, fetch, merge, and pull requests at a basic level.
+
+## Core concepts
+
+| Bitbucket concept | First-principles meaning |
+| --- | --- |
+| Workspace | A collaboration boundary for people, repositories, settings, and billing |
+| Project | A grouping layer for related repositories inside a workspace |
+| Repository | A hosted Git repository plus Bitbucket metadata |
+| Pull request | A proposed branch change wrapped in review, comments, tasks, checks, and merge policy |
+| Branch permissions | Rules that restrict who can write, rewrite, or delete branch patterns |
+| Merge checks | Conditions that must be satisfied before a PR can merge |
+| Pipelines | CI/CD workflows defined in repository YAML and run by Bitbucket |
+| Deployments | Environment-aware release records connected to pipeline runs |
+
+## Internal workings
+
+Bitbucket sits around Git ref updates:
+
+```text
+developer pushes branch
+  -> Bitbucket stores Git objects and refs
+  -> pull request compares source and destination branches
+  -> reviewers discuss the diff
+  -> merge checks evaluate policy
+  -> pipelines publish build status and deployment state
+  -> merge updates the destination branch
+```
+
+The Git repository remains the substrate. Bitbucket adds workflow state around it.
+
+## Design decisions
+
+Use Bitbucket when the team wants Git hosting tightly connected to Atlassian planning and delivery workflows. Its design is especially strong when Jira issues, pull requests, deployments, and branch restrictions should be part of one operating system.
+
+## Alternatives
+
+| Alternative | Better when |
+| --- | --- |
+| GitHub | Open-source network effects, GitHub Actions ecosystem, GitHub-native security workflows |
+| GitLab | Integrated DevSecOps platform and self-managed CI/CD depth |
+| Gerrit | Patch-set review discipline and large monorepo review flows |
+| Plain Git server | Minimal hosting without product workflow |
+
+## Common misconceptions
+
+- "Bitbucket is only GitHub with a different logo." Bitbucket's strongest differentiator is Atlassian workflow integration.
+- "Projects are repositories." Projects group repositories; repositories store Git history.
+- "Pipelines are separate from code review." Pipeline results are part of merge readiness.
+- "Branch permissions replace trust." They encode minimum safety rules; teams still need review culture.
+
+## References
+
+- [Bitbucket Cloud documentation](https://support.atlassian.com/bitbucket-cloud/)
+- [Bitbucket Cloud pull requests](https://support.atlassian.com/bitbucket-cloud/docs/create-a-pull-request/)
+- [Bitbucket branch restrictions](https://support.atlassian.com/bitbucket-cloud/docs/use-branch-permissions/)
+- [Bitbucket Pipelines documentation](https://support.atlassian.com/bitbucket-cloud/docs/get-started-with-bitbucket-pipelines/)
+- [Bitbucket and Jira integration](https://support.atlassian.com/bitbucket-cloud/docs/use-bitbucket-with-jira/)
+
+## Related topics
+
+- [Bitbucket Platform Mental Model](./01-bitbucket-platform-mental-model)
+- [GitHub Collaboration Platform Mental Model](../github/33-github-collaboration-platform-mental-model)
+
+## Open questions
+
+- How much Jira context should appear in a code review before it becomes noise?
+- Should Bitbucket be taught before or after GitHub in the Atlas?
+
+## Research opportunities
+
+- Compare review speed and traceability between GitHub-native and Atlassian-native teams.
+- Build a map from Jira issue status to branch, PR, pipeline, and deployment state.

@@ -1,0 +1,141 @@
+---
+title: "Complete Git End-To-End Field Guide"
+description: "A compact but deep end-to-end Git field guide from first principles through daily work, collaboration, recovery, release, and long-term maintenance."
+domain: "Computer Science"
+category: "Git"
+subcategory: "Git"
+difficulty: "research"
+stage: "research"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "git"
+  - "field-guide"
+prerequisites:
+  - "./05-git-mental-model"
+  - "./47-workflow-reasoning-and-recovery-playbooks"
+related:
+  - "./50-advanced-git-workflow-systems"
+  - "../bitbucket/00-why-bitbucket-exists"
+researchQuestions:
+  - "What is the smallest complete Git model that supports professional work?"
+  - "How can a field guide stay concise without becoming shallow?"
+---
+
+# Complete Git End-To-End Field Guide
+
+This page is the operational spine of the Git track. It does not replace every specialized Git page. It gives the complete map a developer should carry while moving from local edits to team-reviewed production history.
+
+## What are we learning?
+
+We are learning Git as an end-to-end system:
+
+```text
+working tree -> index -> commit -> branch -> remote -> pull request -> protected main -> release -> recovery
+```
+
+The durable idea is that Git work is controlled movement between states. Files change, the index records intended content, commits freeze snapshots, refs name graph tips, remotes exchange objects and refs, and teams build policy around which refs may move.
+
+## Why does it matter?
+
+Git is often the safety layer beneath every code change. If the safety layer is misunderstood, developers become afraid of ordinary operations and reckless during emergencies. A strong Git model lets a developer work calmly: inspect first, choose the state transition, verify the result, and recover if needed.
+
+## What problem does it solve?
+
+Most Git material is either a command list or an internals manual. This field guide connects the two. It tells you what to do in normal work, why it works, what it changes internally, and what to check before sharing it.
+
+## Prerequisites
+
+You should know basic shell navigation and the idea that a repository stores project history. You do not need graph theory, distributed systems, or filesystem internals before starting; this page introduces only the pieces needed for Git judgment.
+
+## Core concepts
+
+| Concept | First-principles meaning | Professional habit |
+| --- | --- | --- |
+| Working tree | Editable files on disk | Treat as draft state |
+| Index | Proposed next commit | Stage intentionally, not automatically |
+| Commit | Immutable snapshot plus parent links | Make commits coherent review units |
+| Branch | Movable name for a commit | Move private names freely, shared names carefully |
+| Remote | Another repository with refs you can observe and update | Fetch before deciding how to integrate |
+| Pull request | Proposed ref change wrapped in review and checks | Keep small enough to understand |
+| Reflog | Local record of where refs pointed | Use before assuming work is lost |
+
+## Internal workings
+
+Daily commands map to simple internal changes:
+
+| Command | Internal effect |
+| --- | --- |
+| `git add path` | Stores blob objects as needed and updates index entries |
+| `git commit` | Writes tree and commit objects, then moves the current branch ref |
+| `git switch branch` | Moves HEAD to another branch and updates working tree and index |
+| `git fetch` | Downloads missing reachable objects and updates remote-tracking refs |
+| `git merge` | Creates an integration commit when histories diverge |
+| `git rebase` | Creates new commits by replaying changes onto another base |
+| `git push` | Sends missing objects and asks the remote to update refs |
+
+If you can describe the before and after state, you can usually choose the right command.
+
+## Design decisions
+
+Use this operating sequence for serious work:
+
+1. Inspect: `git status`, `git log --oneline --graph --decorate --all`.
+2. Update knowledge: `git fetch --prune`.
+3. Make a branch from a known base.
+4. Stage intentionally.
+5. Commit coherent changes.
+6. Integrate latest main with merge or rebase based on branch-sharing rules.
+7. Push with normal push, or `--force-with-lease` only for private rewritten branches.
+8. Open a pull request.
+9. Let review, checks, and branch policy decide merge readiness.
+10. Recover with reflog, revert, reset, restore, or branch recreation based on what has been shared.
+
+## Alternatives
+
+| Need | Prefer | Avoid |
+| --- | --- | --- |
+| Undo local staged file | `git restore --staged path` | Resetting whole branch |
+| Undo local file edits | `git restore path` | Deleting and re-cloning |
+| Undo shared commit | `git revert` | Rewriting protected main |
+| Clean private PR history | Interactive rebase | Rebasing a branch other people use |
+| Bring main into shared branch | Merge | Surprise force push |
+| Backport one fix | Cherry-pick | Manually copying code |
+
+## Common misconceptions
+
+- "Git stores changes." Git stores objects and computes changes as views.
+- "Push means save." Commit saves local history; push shares it.
+- "Pull is harmless." Pull combines fetch with integration. Inspecting with fetch first is safer.
+- "Reset is the undo command." Reset is ref and tree movement. Revert, restore, branch recreation, and reflog may be better.
+- "A clean history is always linear." Linear history is one useful policy, not the only truthful history.
+
+## References
+
+- [Git reference manual](https://git-scm.com/docs)
+- [Pro Git](https://git-scm.com/book/en/v2)
+- [git-status](https://git-scm.com/docs/git-status)
+- [git-add](https://git-scm.com/docs/git-add)
+- [git-commit](https://git-scm.com/docs/git-commit)
+- [git-fetch](https://git-scm.com/docs/git-fetch)
+- [git-push](https://git-scm.com/docs/git-push)
+- [git-reflog](https://git-scm.com/docs/git-reflog)
+
+## Related topics
+
+- [Advanced Git Workflow Systems](./50-advanced-git-workflow-systems)
+- [Workflow Reasoning And Recovery Playbooks](./47-workflow-reasoning-and-recovery-playbooks)
+- [Git Internals From Filesystem To Replication](./48-git-internals-from-filesystem-to-replication)
+
+## Open questions
+
+- Should the Atlas teach `git fetch` before `git pull` in every beginner path?
+- Should every workflow page include a "shared or private branch?" decision first?
+- How much internals detail should appear before a learner performs the first commit?
+
+## Research opportunities
+
+- Build exercises where learners predict Git state before running each command.
+- Create a printable Git state transition map.
+- Compare beginner recovery success when taught reflog early versus late.

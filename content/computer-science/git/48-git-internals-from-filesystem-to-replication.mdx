@@ -1,0 +1,323 @@
+---
+title: "Git Internals From Filesystem To Replication"
+description: "A first-principles explanation of how Git is built: filesystem layout, objects, refs, index, packfiles, protocols, and a path to implementing a small Git."
+domain: "Computer Science"
+category: "Git"
+subcategory: "Git"
+difficulty: "research"
+stage: "research"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "git"
+  - "internals"
+  - "systems"
+prerequisites:
+  - "./20-git-object-model"
+  - "./26-index-internals"
+  - "./28-packfiles"
+related:
+  - "./44-implementing-a-mini-git"
+  - "../github/34-ai-native-git-and-github-futures"
+researchQuestions:
+  - "Which Git internals should be taught before commands become easier rather than harder?"
+  - "What minimum subset of Git can a learner implement to understand the full system?"
+---
+
+# Git Internals From Filesystem To Replication
+
+Git feels like a tool, but internally it is a content-addressed object database, a mutable ref namespace, an index file, and network protocols for exchanging reachable objects.
+
+## What are we learning?
+
+We are learning how Git is built deeply enough that a learner could implement a small compatible subset:
+
+- store blobs, trees, commits, and tags;
+- move refs safely;
+- read and write an index-like staging area;
+- walk commit history;
+- pack and unpack objects;
+- exchange missing objects with another repository;
+- recover from local mistakes by finding old refs and objects.
+
+## Why does it matter?
+
+Internals make daily Git less mysterious. Once you know what Git stores, many confusing commands become ordinary state changes:
+
+- `git add` updates the index and object database.
+- `git commit` creates tree and commit objects, then moves a ref.
+- `git branch` creates or moves a name.
+- `git checkout` or `git switch` changes HEAD and updates the working tree.
+- `git fetch` downloads objects and updates remote-tracking refs.
+- `git gc` packs reachable objects and prunes old unreachable ones after grace periods.
+
+## What problem does it solve?
+
+This page solves the "black box" problem. It connects Git commands to the kernel/filesystem layer and to the replicated repository model.
+
+## Common beginner confusion
+
+| Confusion | Internal correction |
+| --- | --- |
+| "Git stores diffs." | Git stores objects. Commits point to trees, trees point to blobs and other trees. Diffs are computed views between states. |
+| "A commit contains all files directly." | A commit points to a root tree object; that tree recursively names file paths and blob IDs. |
+| "Branches contain history." | Branch refs are files or packed ref entries that name commit IDs. History is parent links. |
+| "The index is just a cache." | The index is the proposed next tree plus metadata that lets Git compare working tree, index, and HEAD efficiently. |
+| "Push uploads my branch." | Push negotiates missing objects, transfers packed objects, then asks the remote to update refs. |
+
+## Prerequisites
+
+Useful background:
+
+- Files are bytes.
+- Hash functions map bytes to fixed-size identifiers.
+- Directories can be represented as trees.
+- Graph reachability means "can I get from this node to that node by following edges?"
+- Filesystems make durability hard because writes, renames, and crashes must be considered.
+
+## Core concepts
+
+## Object database
+
+Git's object database stores typed byte sequences by object ID. In SHA-1 repositories, the object ID is derived from:
+
+```text
+object-id = hash(type + space + size + NUL + content)
+```
+
+The important idea is not SHA-1 itself. The important idea is content addressing: the name of an object depends on its content.
+
+Core object types:
+
+| Object | Meaning |
+| --- | --- |
+| Blob | File content bytes, without file name |
+| Tree | Directory entries: mode, name, and object ID |
+| Commit | Root tree, parent commits, author, committer, message |
+| Tag | Annotated name for an object, usually a release commit |
+
+### Loose object layout
+
+A loose object is stored under `.git/objects` using the object ID:
+
+```text
+.git/objects/ab/cdef...
+```
+
+The first two hex characters form a directory. The rest form the file name. The object payload is compressed.
+
+## Index file
+
+The index file, usually `.git/index`, is the staging area. It records path entries, object IDs, file modes, and metadata used to notice changes.
+
+Mental model:
+
+```text
+working tree: files you can edit
+index:        next tree you propose to commit
+HEAD:         tree recorded by the current branch tip
+```
+
+That three-part model explains many commands:
+
+| Command | Primary movement |
+| --- | --- |
+| `git add path` | working tree to index |
+| `git restore --staged path` | HEAD version back into index |
+| `git restore path` | index or HEAD version back into working tree |
+| `git commit` | index to new commit |
+
+## Internal workings
+
+### Creating a commit by hand
+
+Conceptually:
+
+```bash
+git hash-object -w file.txt
+git update-index --add file.txt
+git write-tree
+git commit-tree <tree> -p <parent>
+git update-ref refs/heads/main <commit>
+```
+
+Porcelain commands package these plumbing operations into safer workflows.
+
+### Refs and HEAD
+
+Refs are names for object IDs:
+
+```text
+.git/refs/heads/main
+.git/refs/tags/v1.0.0
+.git/refs/remotes/origin/main
+```
+
+HEAD is usually a symbolic ref:
+
+```text
+ref: refs/heads/main
+```
+
+Detached HEAD means HEAD contains a commit ID directly. The commit can still exist, but no branch name moves automatically with new commits.
+
+### Packfiles
+
+Loose objects are simple but inefficient. Packfiles store many objects together, often delta-compressed against related objects.
+
+Packfiles solve:
+
+- network transfer size;
+- filesystem overhead from many small files;
+- faster object enumeration;
+- efficient storage for similar versions of files.
+
+The cost is complexity: delta chains, indexes, reachability, and repacking strategy.
+
+### Commit-graph and acceleration
+
+Large repositories need faster ancestry queries. Commit-graph files store commit metadata and graph relationships in a form optimized for graph walks.
+
+This matters for commands like:
+
+```bash
+git log
+git merge-base
+git branch --contains
+```
+
+### Protocol v2
+
+Protocol v2 separates capability discovery from commands such as `ls-refs` and `fetch`. This makes negotiation more structured and extensible.
+
+High-level fetch model:
+
+```text
+client asks: what refs do you have?
+client says: I want these commits
+client says: I already have these commits
+server sends: a packfile with missing reachable objects
+client updates: remote-tracking refs
+```
+
+## Design decisions
+
+Git's design trades user simplicity for system power:
+
+| Decision | Benefit | Cost |
+| --- | --- | --- |
+| Content-addressed objects | Integrity and deduplication | Object IDs change when content or parents change |
+| Immutable commits | Reliable history graph | Rewriting creates new commits instead of editing old ones |
+| Mutable refs | Branches are cheap movable names | Users confuse branch names with history itself |
+| Separate index | Precise commit construction | Beginners must learn a third state between files and commits |
+| Distributed clones | Offline work and resilience | Sync and collaboration require explicit ref negotiation |
+
+## Alternatives
+
+Git could have been built around patches, centralized locks, database rows, or append-only logs. Those designs make some operations easier and others harder.
+
+| Alternative | Easier | Harder |
+| --- | --- | --- |
+| Centralized VCS | Access control, global sequencing | Offline work, cheap branching, distributed resilience |
+| Patch queue | Reviewing small changes | Representing full project snapshots and arbitrary merges |
+| Database-backed VCS | Queries and transactions | Portability, local repair, simple filesystem inspection |
+| Semantic VCS | Language-aware merges | Universal file support and predictable low-level behavior |
+
+## Common misconceptions
+
+- "Git is just a diff tool." Git can show diffs, but its core is object storage and graph movement.
+- "The object ID only identifies file content." Commit IDs also depend on tree ID, parent IDs, author/committer metadata, and message.
+- "Garbage collection immediately deletes lost work." Unreachable objects often survive for a grace period and reflogs extend recoverability.
+- "Packfiles are only for remotes." Local repositories also pack objects for storage and performance.
+- "GitHub stores a different kind of Git." GitHub hosts Git repositories and adds services around them; the Git object model remains central.
+
+## Advanced section: replicate Git from the kernel level upward
+
+A minimal Git implementation can be built in layers.
+
+1. Filesystem layer
+   - Create `.git-mini/objects`, `.git-mini/refs/heads`, and `.git-mini/HEAD`.
+   - Write files atomically with temp file plus rename.
+   - Use fsync or platform-appropriate durability for critical ref updates.
+
+2. Object layer
+   - Implement object framing: `type size\0content`.
+   - Compress content.
+   - Hash framed bytes.
+   - Store by hash path.
+
+3. Tree layer
+   - Walk a directory.
+   - Store file blobs.
+   - Store directory entries with names, modes, and object IDs.
+
+4. Commit layer
+   - Write commit text with tree, parent, author, committer, and message.
+   - Update a branch ref.
+   - Read commits by object ID.
+
+5. Index layer
+   - Store path to object ID mappings.
+   - Compare working tree metadata to index entries.
+   - Build trees from the index.
+
+6. Ref layer
+   - Implement symbolic HEAD.
+   - Implement branch creation.
+   - Implement reflog entries before moving refs.
+
+7. Merge layer
+   - Find merge base.
+   - Perform three-way file merge for text.
+   - Record unresolved conflicts in the index.
+
+8. Pack layer
+   - Enumerate reachable objects.
+   - Write pack stream.
+   - Add an index for object lookup.
+   - Add deltas only after the naive pack works.
+
+9. Protocol layer
+   - Advertise refs.
+   - Negotiate have/want sets.
+   - Transfer packfile.
+   - Update remote-tracking refs.
+
+10. Policy layer
+   - Reject non-fast-forward updates unless explicitly forced.
+   - Require leases for safer force updates.
+   - Verify object integrity before accepting refs.
+
+That is enough to understand why real Git is both small in core idea and deep in engineering detail.
+
+## References
+
+- [Pro Git: Git Internals](https://git-scm.com/book/en/v2/Git-Internals-Plumbing-and-Porcelain)
+- [Git object model overview](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects)
+- [Git index format](https://git-scm.com/docs/index-format)
+- [Git pack format](https://git-scm.com/docs/pack-format)
+- [Git protocol v2](https://git-scm.com/docs/protocol-v2)
+- [Git repository layout](https://git-scm.com/docs/gitrepository-layout)
+- [Git commit-graph technical documentation](https://github.com/git/git/blob/master/Documentation/technical/commit-graph.adoc)
+- [Git glossary](https://git-scm.com/docs/gitglossary)
+
+## Related topics
+
+- [Git Object Model](./20-git-object-model)
+- [Index Internals](./26-index-internals)
+- [Packfiles](./28-packfiles)
+- [Implementing A Mini Git](./44-implementing-a-mini-git)
+- [AI-Native Git And GitHub Futures](../github/34-ai-native-git-and-github-futures)
+
+## Open questions
+
+- How early should filesystem durability be introduced in a learning path?
+- Should learners implement a toy object store before learning `git add`?
+- Can an interactive visual object database make packfiles understandable without reading the binary format?
+
+## Research opportunities
+
+- Build a mini Git in stages and compare each stage to real Git plumbing commands.
+- Create a repository explorer that shows working tree, index, refs, objects, and reflog side by side.
+- Investigate semantic object storage for code-aware diffs while preserving Git-compatible object exchange.

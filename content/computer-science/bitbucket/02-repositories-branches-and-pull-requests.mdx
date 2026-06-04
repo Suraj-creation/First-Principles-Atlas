@@ -1,0 +1,111 @@
+---
+title: "Repositories, Branches, And Pull Requests"
+description: "How Bitbucket repositories, branches, and pull requests form the core code collaboration loop."
+domain: "Computer Science"
+category: "Bitbucket"
+subcategory: "Bitbucket"
+difficulty: "intermediate"
+stage: "practice"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "bitbucket"
+  - "pull-requests"
+prerequisites:
+  - "./01-bitbucket-platform-mental-model"
+related:
+  - "./03-branch-permissions-merge-checks-and-review"
+researchQuestions:
+  - "How should Bitbucket PRs be sized for high-quality review?"
+---
+
+# Repositories, Branches, And Pull Requests
+
+Bitbucket collaboration begins with a repository but becomes useful through branches and Pull requests.
+
+## What are we learning?
+
+We are learning the standard Bitbucket code-change loop:
+
+```text
+create branch -> commit -> push -> open pull request -> review -> checks -> merge
+```
+
+## Why does it matter?
+
+This loop is where most team software work becomes visible. If pull requests are too large, branches live too long, or reviewers lack context, the platform cannot protect quality.
+
+## What problem does it solve?
+
+Repositories store the code. Branches isolate work. Pull requests create a reviewable proposal before important branch refs move.
+
+## Prerequisites
+
+Know Git branches, remotes, commits, and the idea of a protected destination branch such as `main`.
+
+## Core concepts
+
+| Concept | Meaning in Bitbucket |
+| --- | --- |
+| Repository | Hosted Git repo plus settings, PRs, pipelines, and permissions |
+| Branch | Git ref used as a line of work |
+| Pull request | Proposed merge from source branch into destination branch |
+| Reviewer | Person asked to inspect the change |
+| Task | Review item that should be resolved before merge |
+| Build status | CI result attached to a commit or PR |
+
+## Internal workings
+
+A Bitbucket pull request compares two refs. When the source branch changes, the PR diff updates. When a pipeline reports success or failure, merge checks can allow or block merge.
+
+Small PRs work better because the comparison remains understandable.
+
+## Design decisions
+
+Use branch naming to encode purpose:
+
+| Pattern | Use |
+| --- | --- |
+| `feature/JIRA-123-auth-flow` | Normal feature work tied to Jira |
+| `bugfix/JIRA-456-null-token` | Non-emergency defect |
+| `hotfix/JIRA-789-payment-timeout` | Urgent production fix |
+| `release/2026-06` | Stabilization line |
+
+Put the Jira key in branch names and commits when your team depends on Jira integration.
+
+## Alternatives
+
+| Review style | Best when |
+| --- | --- |
+| Feature branch PR | Most team work |
+| Fork PR | External contributors or restricted write access |
+| Direct push | Personal repositories or low-risk generated branches |
+| Stacked PRs | Large dependent work that needs review in layers |
+
+## Common misconceptions
+
+- "A pull request is only a diff." It is a review, discussion, check, and merge-policy object.
+- "More reviewers means safer." More reviewers can diffuse responsibility. Use relevant reviewers.
+- "A branch should live until the whole feature is done." Long-lived branches drift. Use smaller reviewable increments when possible.
+
+## References
+
+- [Create a pull request in Bitbucket Cloud](https://support.atlassian.com/bitbucket-cloud/docs/create-a-pull-request/)
+- [Review code in a pull request](https://support.atlassian.com/bitbucket-cloud/docs/review-code-in-a-pull-request/)
+- [Bitbucket branching model](https://support.atlassian.com/bitbucket-cloud/docs/use-a-branching-model/)
+
+## Related topics
+
+- [Branch Permissions, Merge Checks, And Review](./03-branch-permissions-merge-checks-and-review)
+- [Advanced Git Workflow Systems](../git/50-advanced-git-workflow-systems)
+
+## Open questions
+
+- Should the Atlas recommend Jira keys in all Bitbucket branch names?
+- How should stacked PRs be represented in Bitbucket teams?
+
+## Research opportunities
+
+- Compare PR size and review latency across Bitbucket teams.
+- Build a PR checklist for bugfix, feature, migration, and hotfix changes.

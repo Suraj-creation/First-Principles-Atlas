@@ -1,0 +1,107 @@
+---
+title: "Jira, Governance, Security, And Migration"
+description: "How Bitbucket connects code to Jira work, repository governance, security controls, Bitbucket Data Center, and migration decisions."
+domain: "Computer Science"
+category: "Bitbucket"
+subcategory: "Bitbucket"
+difficulty: "advanced"
+stage: "systems"
+type: "track-topic"
+status: "scaffold"
+tags:
+  - "computer-science"
+  - "bitbucket"
+  - "jira"
+prerequisites:
+  - "./01-bitbucket-platform-mental-model"
+related:
+  - "./06-advanced-bitbucket-operating-model"
+researchQuestions:
+  - "How should code collaboration connect to planning and governance without becoming bureaucratic?"
+---
+
+# Jira, Governance, Security, And Migration
+
+Bitbucket is often chosen because code, planning, and delivery can live in one Atlassian operating model.
+
+## What are we learning?
+
+We are learning Jira integration, governance, security, migration, and the difference between Bitbucket Cloud and Bitbucket Data Center.
+
+## Why does it matter?
+
+Teams need traceability from issue to code to deployment. Enterprises also need access control, auditability, compliance, and migration planning. Bitbucket can support these needs if its governance model is designed intentionally.
+
+## What problem does it solve?
+
+This page solves the "code is disconnected from work" problem. A change should not be just a commit. It should be connected to the issue, review, checks, deployment, and operational outcome.
+
+## Prerequisites
+
+Know Jira issue keys, pull requests, branch permissions, pipelines, and deployment environments.
+
+## Core concepts
+
+| Area | Bitbucket concern |
+| --- | --- |
+| Jira integration | Link branches, commits, PRs, and deployments to issues |
+| Governance | Workspace/project/repository settings, permissions, branch rules |
+| Security | Access tokens, SSH keys, secrets, branch restrictions, dependency awareness |
+| Migration | Moving repositories, users, permissions, CI/CD, and integrations |
+| Data Center | Self-managed Bitbucket for enterprise control and internal hosting |
+
+## Internal workings
+
+Jira integration usually depends on issue keys in branch names, commit messages, and pull requests. Bitbucket can surface development information in Jira, while Jira gives reviewers the business context behind code changes.
+
+```text
+JIRA-123
+  branch: feature/JIRA-123-checkout
+  commits: include JIRA-123
+  PR: links back to issue
+  pipeline: reports build/deploy state
+```
+
+## Design decisions
+
+Use traceability without making developers perform duplicate bookkeeping:
+
+- Put Jira keys in branch names or PR titles.
+- Link PRs to issues.
+- Let pipelines publish deployment status.
+- Keep repository permissions aligned with team ownership.
+- Use branch restrictions for main and release branches.
+- Store secrets in Bitbucket variable scopes, not code.
+
+## Alternatives
+
+Jira-heavy teams benefit from Bitbucket integration. Teams centered on GitHub Issues, Linear, or GitLab may prefer their matching code platform. Migration should consider not just repositories, but review history, CI/CD behavior, permissions, webhooks, and developer habits.
+
+## Common misconceptions
+
+- "Migration means `git push --mirror`." That moves Git refs, not permissions, PRs, CI/CD, secrets, issue links, or governance.
+- "Jira integration means every commit needs a giant process." Good integration reduces status chasing.
+- "Data Center is just Cloud on your server." Bitbucket Data Center adds operational responsibility.
+
+## References
+
+- [Use Bitbucket with Jira](https://support.atlassian.com/bitbucket-cloud/docs/use-bitbucket-with-jira/)
+- [Bitbucket Cloud security](https://support.atlassian.com/bitbucket-cloud/docs/security-features/)
+- [Bitbucket Cloud access keys](https://support.atlassian.com/bitbucket-cloud/docs/access-keys/)
+- [Bitbucket Data Center documentation](https://confluence.atlassian.com/bitbucketserver)
+- [Import or convert code from an existing tool](https://support.atlassian.com/bitbucket-cloud/docs/import-or-convert-code-from-an-existing-tool/)
+
+## Related topics
+
+- [Advanced Bitbucket Operating Model](./06-advanced-bitbucket-operating-model)
+- [Bitbucket Reference Library](./07-bitbucket-reference-library)
+
+## Open questions
+
+- Which Jira fields should influence merge or deployment policy?
+- How should migrated repositories preserve review and deployment history?
+
+## Research opportunities
+
+- Build a migration checklist from GitHub/GitLab to Bitbucket.
+- Design a governance model that maps Jira projects to Bitbucket Projects and repositories.

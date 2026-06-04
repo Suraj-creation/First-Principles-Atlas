@@ -79,7 +79,12 @@
             { "slug": "42-git-limitations", "title": "Git Limitations" },
             { "slug": "43-future-of-version-control", "title": "Future Of Version Control" },
             { "slug": "44-implementing-a-mini-git", "title": "Implementing A Mini Git" },
-            { "slug": "45-research-questions-in-version-control", "title": "Research Questions In Version Control" }
+            { "slug": "45-research-questions-in-version-control", "title": "Research Questions In Version Control" },
+            { "slug": "46-deep-git-github-learning-roadmap", "title": "Deep Git And GitHub Learning Roadmap" },
+            { "slug": "47-workflow-reasoning-and-recovery-playbooks", "title": "Workflow Reasoning And Recovery Playbooks" },
+            { "slug": "48-git-internals-from-filesystem-to-replication", "title": "Git Internals From Filesystem To Replication" },
+            { "slug": "49-complete-git-end-to-end-field-guide", "title": "Complete Git End-To-End Field Guide" },
+            { "slug": "50-advanced-git-workflow-systems", "title": "Advanced Git Workflow Systems" }
           ]
         },
         {
@@ -119,7 +124,25 @@
             { "slug": "29-github-limitations", "title": "GitHub Limitations" },
             { "slug": "30-alternatives-to-github", "title": "Alternatives To GitHub" },
             { "slug": "31-future-of-developer-platforms", "title": "Future Of Developer Platforms" },
-            { "slug": "32-research-questions-in-code-collaboration", "title": "Research Questions In Code Collaboration" }
+            { "slug": "32-research-questions-in-code-collaboration", "title": "Research Questions In Code Collaboration" },
+            { "slug": "33-github-collaboration-platform-mental-model", "title": "GitHub Collaboration Platform Mental Model" },
+            { "slug": "34-ai-native-git-and-github-futures", "title": "AI-Native Git And GitHub Futures" },
+            { "slug": "35-git-and-github-reference-library", "title": "Git And GitHub Reference Library" }
+          ]
+        },
+        {
+          "slug": "bitbucket",
+          "title": "Bitbucket",
+          "description": "A first-principles track for Bitbucket Cloud and Data Center collaboration, pull requests, branch permissions, CI/CD, Jira integration, and enterprise Git operations.",
+          "track": [
+            { "slug": "00-why-bitbucket-exists", "title": "Why Bitbucket Exists" },
+            { "slug": "01-bitbucket-platform-mental-model", "title": "Bitbucket Platform Mental Model" },
+            { "slug": "02-repositories-branches-and-pull-requests", "title": "Repositories, Branches, And Pull Requests" },
+            { "slug": "03-branch-permissions-merge-checks-and-review", "title": "Branch Permissions, Merge Checks, And Review" },
+            { "slug": "04-bitbucket-pipelines-deployments-and-secrets", "title": "Bitbucket Pipelines, Deployments, And Secrets" },
+            { "slug": "05-jira-governance-security-and-migration", "title": "Jira, Governance, Security, And Migration" },
+            { "slug": "06-advanced-bitbucket-operating-model", "title": "Advanced Bitbucket Operating Model" },
+            { "slug": "07-bitbucket-reference-library", "title": "Bitbucket Reference Library" }
           ]
         },
         { "slug": "version-control-systems", "title": "Version Control Systems" },

@@ -1,0 +1,37 @@
+{
+  "name": "first-principles-atlas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Scalable MDX knowledge infrastructure for first-principles technical learning and research mapping.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
+    "start": "next start",
+    "generate:atlas": "node scripts/generate-atlas.mjs",
+    "validate:content": "node scripts/validate-atlas.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run validate:content && npm test && npm run build"
+  },
+  "dependencies": {
+    "next": "^16.2.7",
+    "nextra": "^4.6.1",
+    "nextra-theme-docs": "^4.6.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "gray-matter": "^4.0.3",
+    "pagefind": "^1.4.0",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

@@ -1,0 +1,44 @@
+:root {
+  --atlas-bg: oklch(98.5% 0.006 118);
+  --atlas-ink: oklch(22% 0.018 125);
+  --atlas-muted: oklch(45% 0.025 125);
+  --atlas-accent: oklch(55% 0.13 153);
+  --atlas-border: oklch(88% 0.018 125);
+}
+
+html {
+  background: var(--atlas-bg);
+}
+
+body {
+  color: var(--atlas-ink);
+}
+
+.atlas-logo {
+  color: var(--atlas-ink);
+  font-weight: 750;
+  letter-spacing: 0;
+}
+
+.atlas-home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.atlas-home-panel {
+  border: 1px solid var(--atlas-border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: color-mix(in oklch, var(--atlas-bg), white 50%);
+}
+
+.atlas-home-panel h3 {
+  margin-top: 0;
+}
+
+.atlas-kicker {
+  color: var(--atlas-muted);
+  font-size: 0.95rem;
+}

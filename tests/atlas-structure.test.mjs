@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 
@@ -7,6 +7,22 @@ const root = process.cwd()
 
 function readJson(relativePath) {
   return JSON.parse(readFileSync(path.join(root, relativePath), 'utf8'))
+}
+
+function listMdxFiles(directory) {
+  const entries = readdirSync(directory, { withFileTypes: true })
+  const files = []
+
+  for (const entry of entries) {
+    const fullPath = path.join(directory, entry.name)
+    if (entry.isDirectory()) {
+      files.push(...listMdxFiles(fullPath))
+    } else if (entry.isFile() && entry.name.endsWith('.mdx')) {
+      files.push(fullPath)
+    }
+  }
+
+  return files
 }
 
 test('taxonomy defines all requested first-pass domains', () => {
@@ -79,3 +95,11 @@ test('generated placeholder documents use the standard scaffold sections', () =>
   }
 })
 
+test('mdx placeholders use mdx-safe comments', () => {
+  const files = listMdxFiles(path.join(root, 'content'))
+
+  for (const file of files) {
+    const source = readFileSync(file, 'utf8')
+    assert.equal(source.includes('<!--'), false, `${path.relative(root, file)} has an HTML comment`)
+  }
+})

@@ -39,8 +39,6 @@ export default async function RootLayout({ children }) {
           docsRepositoryBase="https://github.com/Suraj-creation/First-Principles-Atlas/tree/main"
           footer={footer}
           editLink="Edit this scaffold"
-          feedback={{ content: null }}
-          lastUpdated={null}
           sidebar={{ autoCollapse: true }}
         >
           {children}

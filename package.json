@@ -4,6 +4,7 @@
   "private": true,
   "description": "Scalable MDX knowledge infrastructure for first-principles technical learning and research mapping.",
   "scripts": {
+    "postinstall": "node scripts/patch-nextra-layout.mjs",
     "dev": "next dev",
     "build": "next build",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",

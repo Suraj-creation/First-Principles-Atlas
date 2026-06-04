@@ -20,6 +20,8 @@ Nextra provides the documentation shell, file-based MDX routing, generated page 
 
 Contentlayer is not installed in this seed. The same structured-content goal is handled through the taxonomy file and validation scripts. This avoids coupling the foundation to a dependency whose official Next integration documentation is older than the current Nextra and Next stack.
 
+The current Nextra Docs package output validates `Layout` props after destructuring `children`, while its schema still requires `children`. The repository includes `scripts/patch-nextra-layout.mjs` as a postinstall compatibility shim so local, CI, and Vercel installs render consistently until upstream package output changes.
+
 ## Content Flow
 
 ```text

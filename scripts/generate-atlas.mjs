@@ -69,7 +69,7 @@ function frontmatter(metadata) {
 
 function placeholderBody(title) {
   const sections = taxonomy.requiredSections
-    .map(section => `## ${section}\n\n<!-- Content will be written manually. -->`)
+    .map(section => `## ${section}\n\n{/* Content will be written manually. */}`)
     .join('\n\n')
 
   return `# ${title}\n\n> Scaffold status: this page defines structure only. Replace comments with manually researched content when the topic is ready.\n\n${sections}\n`
@@ -169,9 +169,7 @@ status: "scaffold"
 
 async function createDomain(domain) {
   const domainDir = path.join(contentRoot, domain.slug)
-  const meta = {
-    index: metaEntry('Overview', { theme: { toc: true } })
-  }
+  const meta = {}
 
   await writeIfMissing(
     path.join(domainDir, 'index.mdx'),
@@ -204,7 +202,6 @@ async function createDomain(domain) {
 async function createTopic(domain, topic, domainDir) {
   const topicDir = path.join(domainDir, topic.slug)
   const meta = {
-    index: metaEntry('Overview'),
     roadmap: metaEntry('Roadmap')
   }
 
